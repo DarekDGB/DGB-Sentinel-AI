@@ -1,86 +1,76 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
-from .model_loader import load_model
-from .adversarial_engine import compute_adversarial_score
-from .correlation_engine import compute_correlation_anomaly
-from .circuit_breakers import evaluate_circuit_breakers
-from .config import ScoreWeights, CircuitBreakerThresholds
+from .adversarial_engine import analyse_for_adversarial_patterns
+from .circuit_breakers import CircuitBreakerOutcome, evaluate_circuit_breakers
+from .config import CircuitBreakerThresholds
+from .correlation_engine import CorrelationResult, correlate_signals
 
 
 @dataclass
-class ScoreResult:
-    """Final output of the Sentinel-AI v2 scoring engine."""
+class SentinelScore:
+    """Final aggregated risk score for a single telemetry snapshot."""
 
-    level: str
-    score: float
-    reasons: list[str]
+    status: str
+    risk_score: float
+    details: list[str]
+    circuit_breakers: CircuitBreakerOutcome
+    correlation: CorrelationResult
 
 
-class SentinelScoringEngine:
+def compute_risk_score(
+    features: Dict[str, Any],
+    thresholds: CircuitBreakerThresholds,
+) -> SentinelScore:
     """
-    Main end-to-end scoring pipeline combining:
-    - Adversarial features
-    - Correlation anomaly
-    - ML model predictive score
-    - Circuit breakers (override)
+    Orchestrate correlation, adversarial analysis and circuit breakers
+    to produce a final risk status.
+
+    `features` is a flat dict with numeric hints like:
+      - entropy_score
+      - mempool_score
+      - reorg_score
+      - entropy_drop
+      - mempool_anomaly
+      - reorg_depth
+      - model_score (optional, from offline AI model)
     """
+    # 1) multi-signal correlation
+    correlation = correlate_signals(features)
 
-    def __init__(
-        self,
-        model_path: str,
-        weights: ScoreWeights,
-        cb_thresholds: CircuitBreakerThresholds,
-    ) -> None:
-        self.model = load_model(model_path)
-        self.weights = weights
-        self.cb_thresholds = cb_thresholds
+    # 2) adversarial heuristics
+    adv = analyse_for_adversarial_patterns(features)
 
-    def _determine_level(self, score: float) -> str:
-        if score >= 0.85:
-            return "CRITICAL"
-        if score >= 0.65:
-            return "HIGH"
-        if score >= 0.40:
-            return "ELEVATED"
-        return "NORMAL"
+    # 3) circuit breakers (can override everything)
+    cb = evaluate_circuit_breakers(features, thresholds)
 
-    def evaluate(self, features: Dict[str, Any]) -> ScoreResult:
-        reasons: list[str] = []
+    # 4) base score from correlation + adversarial boost
+    score = correlation.adjusted_score + adv.risk_boost
+    score = max(0.0, min(score, 1.0))
 
-        # 1) circuit breakers first
-        cb = evaluate_circuit_breakers(features, self.cb_thresholds)
-        if cb.triggered:
-            return ScoreResult(
-                level="CRITICAL",
-                score=1.0,
-                reasons=["circuit_breaker"] + cb.reasons,
-            )
+    # 5) if circuit breaker fired → force CRITICAL
+    if cb.triggered:
+        status = "CRITICAL"
+        score = max(score, 0.99)
+    elif score >= 0.8:
+        status = "HIGH"
+    elif score >= 0.4:
+        status = "ELEVATED"
+    else:
+        status = "NORMAL"
 
-        # 2) compute partial metrics
-        adv_score = compute_adversarial_score(features)
-        corr_score = compute_correlation_anomaly(features)
-        ml_score = float(self.model.predict(features))  # type: ignore
+    details = list(correlation.details)
+    if adv.reasons:
+        details.extend([f"adversarial:{r}" for r in adv.reasons])
+    if cb.reasons:
+        details.extend([f"circuit_breaker:{r}" for r in cb.reasons])
 
-        # 3) weighted final score
-        final_score = (
-            adv_score * self.weights.adversarial_weight
-            + corr_score * self.weights.correlation_weight
-            + ml_score * self.weights.model_weight
-        )
-
-        # 4) choose level
-        level = self._determine_level(final_score)
-
-        # 5) collect reasons
-        reasons.append(f"adv={adv_score:.2f}")
-        reasons.append(f"corr={corr_score:.2f}")
-        reasons.append(f"ml={ml_score:.2f}")
-
-        return ScoreResult(
-            level=level,
-            score=final_score,
-            reasons=reasons,
-        )
+    return SentinelScore(
+        status=status,
+        risk_score=score,
+        details=details,
+        circuit_breakers=cb,
+        correlation=correlation,
+    )
