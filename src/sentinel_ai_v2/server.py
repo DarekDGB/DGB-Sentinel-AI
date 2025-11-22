@@ -107,3 +107,4 @@ async def status() -> StatusResponse:
         risk_score=float(last.get("risk_score", 0.0)),
         details=last.get("details", []),
     )
+Add FastAPI server for Sentinel AI v2
