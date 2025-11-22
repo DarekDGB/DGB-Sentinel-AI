@@ -57,124 +57,158 @@ class TelemetrySnapshot:
     hashrate: Dict[str, Any] | None = None
     wallet_signals: Dict[str, Any] | None = None
     extra: Dict[str, Any] | None = None
+```
+
 DigiByte integrators may replace dictionaries with stronger schemas.
 
-⸻
+---
 
-4. Model Loader & Verification
+## 4. Model Loader & Verification
 
-Defined in model_loader.py.
+Defined in **model_loader.py**.
 
 Responsibilities:
-	•	Read model file from disk.
-	•	Compute hash using SHA3-256 (default).
-	•	Compare to trusted expected hash from config.
-	•	Reject models if hash mismatch.
-	•	Provide a minimal run_model_inference() interface.
+
+- Read model file from disk  
+- Compute hash using SHA3-256 (default)  
+- Compare to trusted expected hash from config  
+- Reject models if hash mismatch  
+- Provide minimal `run_model_inference()` interface  
 
 Notes:
-	•	Sentinel v2 does not bind to any ML runtime by default — keeps legal & licensing safe.
-	•	Developers can plug in ONNX/Torch/TF internally.
 
-⸻
+- Sentinel v2 does **not** bind to ONNX/Torch/TF → avoids legal/licensing issues  
+- Developers can plug in real runtimes internally  
 
-5. Correlation Engine
+---
 
-Defined in correlation_engine.py.
+## 5. Correlation Engine
+
+Defined in **correlation_engine.py**.
 
 The engine aggregates multi-dimensional features:
-	•	entropy_score
-	•	mempool_score
-	•	reorg_score
-	•	hashrate anomalies
-	•	peer churn
-	•	time-drift patterns
 
-A cross-signal boost is applied when combinations imply real manipulation.
+- entropy_score  
+- mempool_score  
+- reorg_score  
+- hashrate anomalies  
+- peer churn  
+- time-drift patterns  
 
-⸻
+Cross-signal boosts identify coordinated manipulation.
 
-6. Adversarial Engine
+---
 
-Defined in adversarial_engine.py.
+## 6. Adversarial Engine
+
+Defined in **adversarial_engine.py**.
 
 Detects:
-	•	artificially stable behaviour
-	•	suppressed variance
-	•	borderline patterns just below thresholds
-	•	synthetic “normal-looking” entropy/mempool data
-	•	long-term drift poisoning
-Outputs:
-AdversarialAnalysisResult(
-    risk_boost=float,
-    reasons=list[str]
-)
-7. Circuit Breakers (Non-Bypassable)
 
-Defined in circuit_breakers.py.
+- artificially stable behaviour  
+- suppressed variance  
+- borderline patterns just below thresholds  
+- synthetic “normal-looking” telemetry  
+- long-term drift poisoning  
 
-Trigger CRITICAL state when:
-
-Combo A:
-	•	entropy_drop > threshold
-	•	mempool_anomaly > threshold
-	•	reorg_depth > threshold
-
-Combo B:
-	•	abnormal timestamp sequences
-	•	multi-region anomalies
-	•	repeated sudden reorgs
-
-Circuit breakers override model output.
-
-⸻
-
-8. Scoring Pipeline
-	1.	Correlation Engine
-	2.	Adversarial Engine
-	3.	Circuit Breakers
-	4.	Final Score Mapping
-
-Score → Status:
-	•	CRITICAL → any circuit breaker triggers
-	•	HIGH → score ≥ 0.8
-	•	ELEVATED → score ≥ 0.4
-	•	NORMAL → otherwise
 Output:
-SentinelScore(
-    status=str,
-    risk_score=float,
-    details=list[str]
-)
-9. Public API
 
-SentinelClient evaluates raw telemetry:
+```python
+AdversarialAnalysisResult(
+    risk_boost: float,
+    reasons: list[str]
+)
+```
+
+---
+
+## 7. Circuit Breakers (Non-Bypassable)
+
+Defined in **circuit_breakers.py**.
+
+Triggers **CRITICAL** when:
+
+### Combo A (immediate kill-switch)
+- entropy_drop > threshold  
+- mempool_anomaly > threshold  
+- reorg_depth > threshold  
+
+### Combo B (pattern toxicity)
+- abnormal timestamp sequences  
+- multi-region anomalies  
+- repeated sudden reorgs  
+
+Circuit breakers override **everything**, including AI.
+
+---
+
+## 8. Scoring Pipeline
+
+1. Correlation Engine  
+2. Adversarial Engine  
+3. Circuit Breakers  
+4. Final Score Mapping  
+
+### Score → Status
+- **CRITICAL** → any circuit breaker  
+- **HIGH** → score ≥ 0.8  
+- **ELEVATED** → score ≥ 0.4  
+- **NORMAL** → otherwise  
+
+Output:
+
+```python
+SentinelScore(
+    status: str,
+    risk_score: float,
+    details: list[str]
+)
+```
+
+---
+
+## 9. Public API
+
+`SentinelClient` evaluates raw telemetry:
+
+```python
 result = client.evaluate_snapshot(raw)
+```
+
 Returns:
+
+```python
 SentinelResult(
     status="NORMAL|ELEVATED|HIGH|CRITICAL",
     risk_score=float,
     details=list[str]
 )
-10. Testing Requirements
-	•	unit tests for all modules
-	•	regression tests
-	•	adversarial attack simulation tests
-	•	DQSN integration tests
-	•	ADN integration tests
+```
 
-⸻
+---
 
-11. Security & Licensing Notes
-	•	No model weights included → no licensing conflicts
-	•	No external ML dependency → MIT-safe
-	•	No consensus modifications
-	•	No wallet-key interactions
+## 10. Testing Requirements
 
-⸻
+- unit tests  
+- regression tests  
+- adversarial attack simulations  
+- DQSN integration tests  
+- ADN integration tests  
 
-12. Future Extensions
-	•	full graph NN inference
-	•	quantum anomaly classifiers
-	•	deeper wallet-signal analysis
-	•	swarm-enabled anomaly correlation
+---
+
+## 11. Security & Licensing Notes
+
+- No model weights included → **safe under MIT**  
+- No external ML dependency  
+- No consensus modifications  
+- No wallet-key interaction  
+
+---
+
+## 12. Future Extensions
+
+- full graph neural network inference  
+- quantum anomaly classifiers  
+- deeper wallet signal analysis  
+- swarm-enabled anomaly correlation  
