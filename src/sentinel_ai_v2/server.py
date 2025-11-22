@@ -18,7 +18,7 @@ app = FastAPI(
     version="0.1.0",
 )
 
-# Jeden wspólny wrapper w procesie – trzyma ostatni wynik w Monitorze
+# Single shared wrapper instance – keeps last result in Monitor
 wrapper = SentinelWrapper()
 
 
@@ -80,8 +80,8 @@ async def evaluate(req: EvaluateRequest) -> EvaluateResponse:
     """
     try:
         result = wrapper.evaluate(req.telemetry)
-    except Exception as exc:  # noqa: BLE001 - dla prostoty API
-        # W produkcji dev może to zamienić na lepszy error handling / logging
+    except Exception as exc:  # noqa: BLE001 – simplified error handling for this reference implementation
+        # In production, developers can replace this with more robust logging / error handling.
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
     return EvaluateResponse(
@@ -96,7 +96,7 @@ async def status() -> StatusResponse:
     """
     Return last known Sentinel status snapshot (from Monitor).
 
-    Useful for simple dashboards / widgets that just want:
+    Useful for dashboards / widgets that only need:
     - status
     - last risk_score
     - last details
@@ -107,4 +107,3 @@ async def status() -> StatusResponse:
         risk_score=float(last.get("risk_score", 0.0)),
         details=last.get("details", []),
     )
-Add FastAPI server for Sentinel AI v2
