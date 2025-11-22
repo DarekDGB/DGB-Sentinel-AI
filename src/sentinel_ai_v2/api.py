@@ -12,7 +12,6 @@ from .scoring import SentinelScore, compute_risk_score
 @dataclass
 class SentinelResult:
     """Public, simplified result returned by SentinelClient."""
-
     status: str
     risk_score: float
     details: list[str]
@@ -27,7 +26,7 @@ class SentinelClient:
         self._config = config
         self._thresholds: CircuitBreakerThresholds = config.circuit_breakers
 
-        # Model is optional – if file or hash not provided, we just skip it.
+        # Model is optional – if file or hash not provided, we simply skip loading.
         self._model: LoadedModel | None = None
         if config.model_path:
             try:
@@ -36,18 +35,16 @@ class SentinelClient:
                     expected_hash=config.model_hash,
                 )
             except Exception:
-                # In reference implementation we fail open:
-                # system still works using non-ML signals.
+                # Fail-open approach: system continues using non-ML signals only.
                 self._model = None
 
     def evaluate_snapshot(self, raw_telemetry: Dict[str, Any]) -> SentinelResult:
         """
-        Main entrypoint: evaluate a single telemetry snapshot and
-        return a compact result object.
+        Evaluate a single telemetry snapshot and return a compact public result.
         """
         snapshot: TelemetrySnapshot = normalize_raw_telemetry(raw_telemetry)
 
-        # Map structured telemetry to flat feature dict used by scoring engine.
+        # Convert structured telemetry into flat features for the scoring engine.
         features: Dict[str, Any] = {
             "entropy_score": (snapshot.entropy or {}).get("score", 0.0),
             "mempool_score": (snapshot.mempool or {}).get("score", 0.0),
