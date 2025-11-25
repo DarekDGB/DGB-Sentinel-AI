@@ -1,172 +1,136 @@
-# Sentinel AI v2 – Quantum-Resistant Threat Engine for DigiByte
-
-**Sentinel AI v2** is the adversarial-hardened detection layer in the 3-layer DigiByte defense stack:
-
-> **DQSN → Sentinel AI v2 → ADN**
-
-It continuously monitors DigiByte telemetry, detects classical and quantum-era attacks, and emits clear machine-readable risk states for ADN.
-
-Sentinel v2 is built for 2025–2035+ threats, including:
-- 51% + time-warp + deep reorg attacks
-- Quantum Shor/Grover threat scenarios
-- Mempool spam/flood/RBF manipulation
-- Adversarial ML poisoning and smoothing
-- Sybil clustering & eclipse attacks
-
-This repository provides the reference architecture and skeleton implementation for Sentinel AI v2 — a modular framework for DigiByte developers and security researchers.
+# 🛡 Sentinel AI v2  
+### Quantum-Resistant Detection Engine for DigiByte  
+### *(Layer 1 of the 5‑Layer DigiByte Quantum Shield)*  
+**By @Darek_DGB**
 
 ---
 
-## 3-Layer Defense Architecture
+## 🚀 Overview  
+Sentinel AI v2 is the **first line of defense** in the DigiByte Quantum Shield — a 5‑layer protection architecture designed to detect, validate, and defend against advanced threats, including early signs of quantum‑assisted attacks.
 
-### 1. DQSN
-Low-level entropy, timestamps, difficulty, and chain anomaly telemetry.
+Sentinel AI v2 monitors DigiByte’s chain behaviour in real time and identifies anomalies that indicate:  
+- entropy collapse  
+- nonce‑reuse  
+- mempool manipulation  
+- timestamp irregularities  
+- synthetic quantum‑like probes  
+- stealth reorg patterns  
 
-### 2. Sentinel AI v2 (this repository)
-Turns telemetry into:
-- risk scores
-- attack classifications
-- quantum anomaly alerts
-- mempool manipulation signals
-
-### 3. ADN (Autonomous Defense Node)
-Executes defensive actions:
-- hardened mode
-- PQC activation
-- peer filtering
-- fee adjustments
-
-Sentinel v2 never modifies DigiByte consensus — it is a sidecar security service.
+It is the **eyes and intuition** of the entire shield.
 
 ---
 
-## Design Goals
+## 🔵 How Sentinel AI v2 Fits Into the Full Quantum Shield
 
-1. No live learning (no poisoning)  
-2. Adversarial robustness  
-3. Hard-coded circuit-breakers override AI  
-4. Cryptographic integrity (verified model hashes/signatures)  
-5. Deterministic output states: NORMAL, ELEVATED, HIGH, CRITICAL  
+```
+Detection → Validation → Defense → Wallet Protection → PQC Gate
+ (Sentinel AI)     (DQSN)       (ADN v2)        (Guardian)    (Quantum Wallet Guard)
+```
+
+Sentinel AI v2 sends structured threat signals to:  
+- **DQSN**, which validates whether the threat is global or local  
+- **ADN v2**, which executes defensive actions  
+- **Guardian Wallet**, which protects funds in high‑risk events  
 
 ---
 
-## Repository Layout
+## 🧠 Key Features  
+### ✔ Real-Time Anomaly Detection  
+High‑resolution monitoring of 64‑block windows for entropy & behavioural drift.
+
+### ✔ Local vs Global Threat Classification  
+Communicates with DQSN to confirm whether anomalies are isolated or widespread.
+
+### ✔ Weighted Risk System  
+Produces risk states:  
+- NORMAL  
+- ELEVATED  
+- HIGH  
+- CRITICAL  
+
+### ✔ Autonomous Escalation  
+Automatically signals ADN v2 when HIGH risk is confirmed.
+
+### ✔ Testable Architecture  
+Fully compatible with unit tests, smoke tests, and virtual attack simulations.
+
+---
+
+## 📁 Repository Structure  
 
 ```
 Sentinel-AI-v2/
-├─ README.md
-├─ LICENSE
-├─ src/
-│  └─ sentinel_ai_v2/
-│     ├─ __init__.py
-│     ├─ config.py
-│     ├─ data_intake.py
-│     ├─ model_loader.py
-│     ├─ adversarial_engine.py
-│     ├─ correlation_engine.py
-│     ├─ circuit_breakers.py
-│     ├─ scoring.py
-│     ├─ api.py
-│     ├─ cli.py
-│     └─ server.py
-└─ docs/
-   ├─ technical-spec.md
-   └─ whitepaper-sentinel-ai-v2.md
+│
+├── src/
+│   ├── sentinel_core.py
+│   ├── entropy_monitor.py
+│   ├── nonce_scanner.py
+│   ├── mempool_analyzer.py
+│   └── risk_engine.py
+│
+├── tests/
+│   ├── test_smoke.py
+│   └── ATTACK-SIMULATION-REPORT.md
+│
+└── README.md
 ```
 
 ---
 
-## Installation (Python Reference)
+## 🧪 Virtual Attack Simulation  
+A full coordinated attack was executed against all 5 layers of the Quantum Shield.
 
-```bash
-git clone https://github.com/DarekDGB/Sentinel-AI-v2.git
-cd Sentinel-AI-v2
+The attacker attempted:  
+- fake quantum‑like anomalies  
+- DQSN poisoning  
+- ADN safe‑mode disable  
+- Guardian Wallet breach  
+- CPU/log/network overload
 
-python -m venv .venv
-source .venv/bin/activate        # Windows: .venv\Scripts\activate
-```
+Sentinel AI v2 **successfully detected every anomaly**, escalated the threat, and triggered ADN v2’s protective reflex.
 
-Run baseline tests:
-
-```bash
-pytest
-```
-
----
-
-## Basic Usage Example
-
-```python
-from sentinel_ai_v2.api import SentinelClient
-from sentinel_ai_v2.config import load_config
-
-config = load_config("config.yaml")
-sentinel = SentinelClient(config=config)
-
-telemetry = {
-    "entropy": {...},
-    "mempool": {...},
-    "reorg": {...},
-    "peers": {...},
-    "hashrate": {...},
-    "wallet_signals": {...},
-}
-
-result = sentinel.evaluate_snapshot(telemetry)
-
-print(result.status)      # NORMAL / ELEVATED / HIGH / CRITICAL
-print(result.risk_score)  # float 0.0 – 1.0
-print(result.details)     # triggers / circuit-breakers
-```
+### 🔗 Full Report  
+You can read the complete attack simulation (with full logs) here:  
+**`/tests/ATTACK-SIMULATION-REPORT.md`**
 
 ---
 
-## Security Model
+## 🛠 Tests & Validation  
+Sentinel AI v2 includes:
 
-Sentinel AI v2 defends against:
-- adversarial ML poisoning
-- synthetic smoothed “too-normal” patterns
-- slow drift attacks
-- entropy/mempool manipulation
-- tampered model/config files
-- replayed telemetry
+### ✔ Smoke Tests  
+Basic integrity tests to verify correct startup & component stability.  
+`tests/test_smoke.py`
 
-Sentinel AI v2 does NOT:
-- change DigiByte consensus
-- manage wallets or private keys
-- replace DigiByte Core validation
+### ✔ Full Attack Simulation  
+High‑fidelity red‑team scenario with a multi‑vector coordinated attack.  
+`tests/ATTACK-SIMULATION-REPORT.md`
 
 ---
 
-## Documentation
+## 🌐 Part of the DigiByte Quantum Shield  
+Sentinel AI v2 is one component of a larger protection mesh:
 
-- `docs/technical-spec.md` – full technical specification  
-- `docs/whitepaper-sentinel-ai-v2.md` – whitepaper  
+- **Layer 1:** Sentinel AI v2 (Detection)  
+- **Layer 2:** DQSN (Validation)  
+- **Layer 3:** ADN v2 (Defense Reflex)  
+- **Layer 4:** Guardian Wallet v2 (Wallet Protection)  
+- **Layer 5:** Quantum Wallet Guard (PQC Gate)  
+
+Together these form an autonomous, self‑correcting, quantum‑resistant defense system.
 
 ---
 
-## License (MIT)
+## ⚡ Vision Statement  
+Sentinel AI v2 exists to give DigiByte **the most advanced and adaptive security layer in the blockchain ecosystem**.
 
-```
-MIT License
+A future where chains defend themselves —  
+where threats are detected before damage begins —  
+where wallets protect their owners in real time —  
+and where DigiByte leads the world in trustless security.
 
-Copyright (c) 2025 Darek (@Darek_DGB)
+This is the vision.  
+This is the path.  
+This is the beginning.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
-copies of the Software, and to permit persons to whom the Software is  
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all  
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  
-SOFTWARE.
-```
+**— Darek (@Darek_DGB)**
