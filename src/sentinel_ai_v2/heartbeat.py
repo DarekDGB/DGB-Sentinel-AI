@@ -17,7 +17,8 @@ def shield_heartbeat(
 
     When Adaptive Core is available:
       - returns immune report text
-      - prints adaptive state (weights + threshold) in the output
+      - includes adaptive state (weights + threshold)
+      - includes last update timestamps
 
     When not available:
       - returns a simple status message
@@ -33,12 +34,22 @@ def shield_heartbeat(
     # Pull adaptive state
     state = bridge._interface.get_adaptive_state()  # type: ignore
 
-    lines = []
+    # Pull last update metadata
+    last_meta = bridge._interface.get_last_update_metadata()  # type: ignore
+
+    lines: list[str] = []
     lines.append("=== DigiByte Quantum Shield — Heartbeat ===")
     lines.append("")
+
     lines.append(">> Immune Report:")
     lines.append(report_text)
     lines.append("")
+
+    lines.append(">> Last Updates:")
+    lines.append(f"  Last threat received: {last_meta.get('last_threat_received')}")
+    lines.append(f"  Last learning update: {last_meta.get('last_learning_update')}")
+    lines.append("")
+
     lines.append(">> Adaptive State:")
     lines.append(f"  Global Threshold: {state.global_threshold:.3f}")
     lines.append("  Layer Weights:")
