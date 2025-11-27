@@ -25,7 +25,8 @@ class SentinelAdaptiveCoreBridge:
         is not installed.
       - When adaptive_core *is* available, allow Sentinel to:
           * submit ThreatPacket objects to the Adaptive Core
-          * later: request immune reports
+          * submit feedback labels (TRUE_POSITIVE, FALSE_POSITIVE, MISSED_ATTACK)
+          * request immune reports
 
     This keeps Sentinel "adaptive-ready" without introducing a hard
     runtime dependency.
@@ -49,6 +50,10 @@ class SentinelAdaptiveCoreBridge:
         """
         return self._available and self._interface is not None
 
+    # ------------------------------------------------------------------ #
+    # Threat submission
+    # ------------------------------------------------------------------ #
+
     def submit_simple_threat(
         self,
         source_layer: str,
@@ -65,17 +70,6 @@ class SentinelAdaptiveCoreBridge:
         """
         Convenience helper for Sentinel to send a basic threat signal
         into the Adaptive Core.
-
-        Example usage (future, inside Sentinel):
-
-            bridge.submit_simple_threat(
-                source_layer="sentinel_ai_v2",
-                threat_type="reorg_pattern",
-                severity=8,
-                description="Abnormal reorg pattern detected.",
-                block_height=1234567,
-                metadata={"score": 0.94},
-            )
         """
         if not self.is_available:
             # Adaptive Core is not installed / wired in this environment.
@@ -97,6 +91,57 @@ class SentinelAdaptiveCoreBridge:
         )
 
         self._interface.submit_threat_packet(packet)  # type: ignore[arg-type]
+
+    # ------------------------------------------------------------------ #
+    # Feedback submission (teaching the Adaptive Core)
+    # ------------------------------------------------------------------ #
+
+    def submit_feedback_label(
+        self,
+        *,
+        layer: str,
+        feedback: str,
+        event_id: str,
+    ) -> None:
+        """
+        Submit a single labelled feedback event to the Adaptive Core.
+
+        `feedback` should be one of:
+          - "TRUE_POSITIVE"
+          - "FALSE_POSITIVE"
+          - "MISSED_ATTACK"
+
+        (case-insensitive — it will be normalised inside the core).
+
+        We intentionally send a very lightweight object with attributes
+        (event_id, layer, feedback). The Adaptive Core's learning logic
+        only needs these fields and accepts both enums and string tags.
+        """
+
+        if not self.is_available:
+            # No Adaptive Core present → do nothing.
+            return
+
+        # Define a tiny lightweight feedback object that matches what the
+        # AdaptiveEngine expects (duck-typing).
+        class _FeedbackEvent:
+            def __init__(self, event_id: str, layer: str, feedback: str) -> None:
+                self.event_id = event_id
+                self.layer = layer
+                self.feedback = feedback
+
+        # Normalise feedback tag to upper-case; the core will accept strings.
+        tag = feedback.upper()
+
+        events = [_FeedbackEvent(event_id=event_id, layer=layer, feedback=tag)]
+
+        # The AdaptiveCoreInterface already exposes submit_feedback_events,
+        # which forwards the iterable of events into the AdaptiveEngine.
+        self._interface.submit_feedback_events(events)  # type: ignore[arg-type]
+
+    # ------------------------------------------------------------------ #
+    # Read-only views
+    # ------------------------------------------------------------------ #
 
     def get_immune_report_text(self, min_severity: int = 0) -> str:
         """
