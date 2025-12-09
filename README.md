@@ -1,163 +1,250 @@
-# 🛡 Sentinel AI v2 --- Monitoring & Anomaly Detection Layer
+# 🛡️ Sentinel AI v2  
+### *DigiByte Quantum Shield — External Telemetry, Threat Modeling & Anomaly Detection Layer*  
+**Architecture by @DarekDGB — MIT Licensed**
 
-### *DigiByte External Telemetry Layer (Layer 1 of the Monitoring Stack)*
+---
 
-## 1. Project Intent
+## 🚀 Purpose
 
-Sentinel AI v2 is **not** a protocol-layer security system and does
-**not** modify DigiByte consensus, cryptography, or core rules.\
-It is an **external monitoring, analytics, and anomaly-detection layer**
-designed to *observe* DigiByte node behaviour and surface useful risk
-signals.
+**Sentinel AI v2** is the *external, non-consensus* security layer of the **DigiByte Quantum Shield**.  
+It observes, analyzes, correlates, and surfaces emergent threats to the DigiByte network using a
+multi-source telemetry model. Sentinel does **not** interfere with consensus — it informs higher layers.
 
-Its purpose is to help node operators and developers gain deeper
-visibility into: - node health\
-- mempool behaviour\
-- chain stability\
-- reorg patterns\
-- oracle / price-feed deviations\
-- anomaly trends over time
+It is designed as a **whitepaper-level architecture reference**, ready for DigiByte Core developers and
+security researchers to extend and harden.
 
-All cryptographic upgrades and consensus decisions remain the
-responsibility of DigiByte Core (C++).\
-Sentinel AI v2 only **reads, analyses, and reports**.
+---
 
-------------------------------------------------------------------------
+# 🔥 Position in the Quantum Shield (5-Layer Model)
 
-## 2. Architecture Overview
-
-Sentinel sits *outside* the node and consumes data via RPC/logs:
-
-``` mermaid
-flowchart LR
-    A[DigiByte Core Node (C++)] -->|RPC / Logs / Telemetry| B[Sentinel AI v2 (Python)]
-    B --> C[Analytics Engine]
-    C --> D[Anomaly Flags / Logs / Dashboards]
+```
+        ┌────────────────────────────────────────┐
+        │           Guardian Wallet             │
+        │  (User-Side Defence, Rules Engine)    │
+        └────────────────────────────────────────┘
+                        ▲
+                        │
+        ┌────────────────────────────────────────┐
+        │        Quantum Wallet Guard (QWG)      │
+        │ Filters, PQC Safety, Behavioural Logic │
+        └────────────────────────────────────────┘
+                        ▲
+                        │
+        ┌────────────────────────────────────────┐
+        │        ADN v2 — Active Defence         │
+        │  Network Response, Isolation, Tactics  │
+        └────────────────────────────────────────┘
+                        ▲
+                        │
+        ┌────────────────────────────────────────┐
+        │      Sentinel AI v2 (THIS REPO)        │
+        │  Telemetry, Threat Intel, AI Scoring   │
+        └────────────────────────────────────────┘
+                        ▲
+                        │
+        ┌────────────────────────────────────────┐
+        │  DQSN v2 — DigiByte Quantum Shield Net │
+        │  Entropy, Node Health, UTXO Patterns   │
+        └────────────────────────────────────────┘
 ```
 
-------------------------------------------------------------------------
+Sentinel is the **eyes and ears** of the Quantum Shield.
 
-## 3. Key Modules
+---
 
--   `telemetry_monitor.py` --- collects RPC data\
--   `anomaly_engine.py` --- detects unusual chain or mempool behaviour\
--   `adaptive_core_bridge.py` --- *optional* integration with Adaptive
-    Layer\
--   `heartbeat.py` --- generates basic health metadata\
--   `log_utils.py` --- structured logging for dashboards
+# 🎯 Core Mission
 
-------------------------------------------------------------------------
+### ✓ Observe  
+Collect distributed measurements about the network: blocks, peers, latencies, forks, propagation.
 
-## 4. Threat Model & Scope
+### ✓ Identify  
+Detect patterns correlated with attacks:  
+- chain reorg attempts  
+- eclipse attacks  
+- sudden miner dominance  
+- timestamp manipulation  
+- hashpower anomalies  
+- low-entropy block sequences  
+- suspicious geographic clustering  
 
-### 🔍 **What Sentinel AI v2 DOES**
+### ✓ Signal  
+Emit **risk scores** and **structured signals** to ADN v2 and QWG.
 
--   monitors node & chain behaviour\
--   analyses RPC/mempool/log data\
--   detects potential anomalies\
--   emits warning signals / logs\
--   supports dashboards & analytics
+### ✓ Never interfere with consensus  
+Sentinel is **external**. Zero consensus impact.
 
-### 🚫 **What Sentinel AI v2 DOES NOT**
+---
 
--   change protocol rules\
--   modify signature algorithms\
--   isolate wallets or nodes\
--   provide cryptographic protection\
--   stop attacks at the node level
+# 🧠 Threat Model (Formal)
 
-This tool is **read-only** and focused entirely on visibility.
+Sentinel evaluates threats across five planes:
 
-------------------------------------------------------------------------
+1. **Entropy Plane** — randomness quality, difficulty adjustments, timestamp divergence  
+2. **Topology Plane** — peer distribution, clustering, asynchrony  
+3. **Hashrate Plane** — dominance, sudden power shifts, orphan spikes  
+4. **Fork Plane** — fork depth, competitive chain behavior  
+5. **Propagation Plane** — latency, bottlenecks, geographic imbalance  
 
-## ⚠️ Limitations (Added for clarity & alignment with DigiByte Core)
+Each plane forms part of a **multi-factor risk vector**.
 
-This clarifies boundaries and addresses DigiByte Core feedback.
+---
 
-### ✔ Sentinel AI v2 CAN:
+# 🧩 Internal Architecture
 
--   detect stalled chain conditions\
--   detect abnormal mempool spikes\
--   detect reorg-like behaviour\
--   log early warnings\
--   feed dashboards and analytics\
--   assist node operators in diagnostics
-
-### ❌ Sentinel AI v2 CANNOT:
-
--   prevent consensus-level attacks\
--   protect private keys from quantum threats\
--   stop ECDSA-level cryptographic compromise\
--   enforce behaviour on other nodes\
--   modify validation logic
-
-All protocol-level protection happens inside **DigiByte Core (C++)**,
-not here.
-
-------------------------------------------------------------------------
-
-## 5. Example Anomaly Signal API
-
-``` python
-report_reorg_anomaly(
-    block_height=123456,
-    score=0.92,
-    details={"peers_observed": 8}
-)
+```
+sentinel_ai_v2/
+│
+├── collectors/
+│     ├── block_collector.py
+│     ├── peer_collector.py
+│     ├── propagation_collector.py
+│     └── entropy_collector.py
+│
+├── analytics/
+│     ├── reorg_detector.py
+│     ├── timestamp_analyzer.py
+│     ├── miner_behavior.py
+│     ├── anomaly_engine.py
+│     └── score_fusion.py
+│
+├── outputs/
+│     ├── risk_feed.py
+│     ├── alert_bus.py
+│     └── adn_signal_router.py
+│
+└── utils/
+      ├── validators.py
+      ├── config.py
+      └── logging.py
 ```
 
-------------------------------------------------------------------------
+This is a *reference structure*: DigiByte developers extend the logic safely.
 
-## 6. Functional Monitoring Example
+---
 
-``` python
-from sentinel_ai_v2.telemetry_monitor import check_block_progress
+# 📡 Data Flow Overview
 
-status = check_block_progress()
-print(status)
+```
+[Attacker → Network Activity] 
+          ↓
+   (Collectors)
+          ↓
+  [Raw Telemetry Streams]
+          ↓
+   (Analytics Engines)
+          ↓
+   [Threat Scores + Vectors]
+          ↓
+   (Signal Router)
+          ↓
+ [ADN v2 / QWG / Guardian Wallet]
 ```
 
-Logs if the chain is stalled.
+---
 
-------------------------------------------------------------------------
+# 🛡️ Security Philosophy
 
-## 7. Heartbeat Metadata
+Sentinel follows six principles:
 
-``` python
-from sentinel_ai_v2.heartbeat import shield_heartbeat
-print(shield_heartbeat())
-```
+1. **Zero Consensus Influence**  
+   Observes—never rules.
 
-------------------------------------------------------------------------
+2. **Explainable Detection**  
+   AI assists but never becomes a black box.
 
-## 8. Current Functional Coverage
+3. **Multi‑Source Validation**  
+   No single metric determines a threat.
 
--   [x] Telemetry structure\
--   [x] Heartbeat metadata\
--   [x] Anomaly-signal API\
--   [x] Block-progress anomaly detector\
--   [ ] Mempool deviation detector\
--   [ ] Chain-health metrics\
--   [ ] Price-feed deviation checker
+4. **Hard Fail-Safe**  
+   If uncertain → downgrade risk, not upgrade.
 
-------------------------------------------------------------------------
+5. **Immutable Audit Trail**  
+   Reproducible detection paths.
 
-## 9. Safety Properties
+6. **Integration with Higher Layers**  
+   Sentinel sends signals; ADN responds.
 
--   External, non-intrusive\
--   Read-only\
--   Optional Adaptive integration\
--   Modular & test-friendly
+---
 
-------------------------------------------------------------------------
+# 📈 Example Threat Analytics
 
-## 10. License
+### **Reorg Detection**
+- Competing chain growth  
+- Block timestamp deviations  
+- Missing expected difficulty patterns  
+- Sudden orphan spikes  
 
-MIT License --- free to use, modify, and distribute.
+### **Hashrate Dominance**
+- Single pool > 51%  
+- New miner with anomalous behavior  
 
-------------------------------------------------------------------------
+### **Propagation Attacks**
+- Regional latency spikes  
+- Eclipse attempts  
+- Partition anomalies  
 
-## 11. Author
+---
 
-Created by **Darek (@Darek_DGB)**\
-Visionary architect of the DigiByte Monitoring Stack.
+# 🔗 Interaction with Other Shield Layers
+
+### **With DQSN v2**  
+Consumes low-level entropy, node health, block structure metrics.
+
+### **With ADN v2**  
+Provides risk signals that trigger:
+- node isolation recommendations  
+- propagation warnings  
+- defensive mode transitions  
+
+### **With Guardian Wallet / QWG**  
+Can warn user-side systems about:
+- ongoing attacks  
+- suspicious chain conditions  
+
+---
+
+# ⚙️ Code Status
+
+Sentinel AI v2 includes:
+
+- Reference Python implementation  
+- Deterministic analytics stubs  
+- Ready-to-extend module architecture  
+- GitHub Actions test pipeline  
+- Smoke tests ensuring structure integrity
+
+This repo is **architecturally complete** and awaits community expansion.
+
+---
+
+# 🧪 Tests
+
+The test suite includes:
+
+- Structural smoke tests  
+- Block progress monitor tests  
+- Expandable framework for threat simulations  
+
+Passing CI ensures repository integrity.
+
+---
+
+# 🤝 Contribution Policy
+
+Please see `CONTRIBUTING.md`.
+
+In summary:
+- Improvements = welcome  
+- Removals of architecture = rejected  
+- Sentinel must *always* remain an **external, non-consensus monitoring layer**
+
+---
+
+# 📜 License
+
+MIT License  
+© 2025 **DarekDGB**
+
+This architecture is free to use with mandatory attribution.
+
+---
