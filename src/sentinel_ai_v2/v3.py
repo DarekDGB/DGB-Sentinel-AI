@@ -23,31 +23,39 @@ class SentinelV3:
     def evaluate(self, request: Dict[str, Any]) -> Dict[str, Any]:
         start = time.time()
 
+        # --- Hard version gate FIRST (outermost contract rule) ---
+        if not isinstance(request, dict):
+            return self._error_response(
+                request_id="unknown",
+                reason_code=ReasonCode.SNTL_ERROR_INVALID_REQUEST.value,
+                details={"error": "request must be a dict"},
+                latency_ms=self._latency_ms(start),
+            )
+
+        if request.get("contract_version") != self.CONTRACT_VERSION:
+            return self._error_response(
+                request_id=request.get("request_id", "unknown"),
+                reason_code=ReasonCode.SNTL_ERROR_SCHEMA_VERSION.value,
+                details={"error": "contract_version must be 3"},
+                latency_ms=self._latency_ms(start),
+            )
+
         # Strict contract parsing (fail-closed)
         try:
             req = SentinelV3Request.from_dict(request)
         except ValueError as e:
             reason = str(e) or ReasonCode.SNTL_ERROR_INVALID_REQUEST.value
             return self._error_response(
-                request_id=request.get("request_id", "unknown") if isinstance(request, dict) else "unknown",
+                request_id=request.get("request_id", "unknown"),
                 reason_code=reason,
                 details={"error": reason},
                 latency_ms=self._latency_ms(start),
             )
         except Exception:
             return self._error_response(
-                request_id=request.get("request_id", "unknown") if isinstance(request, dict) else "unknown",
+                request_id=request.get("request_id", "unknown"),
                 reason_code=ReasonCode.SNTL_ERROR_INVALID_REQUEST.value,
                 details={"error": "invalid request"},
-                latency_ms=self._latency_ms(start),
-            )
-
-        # Version hard check
-        if req.contract_version != self.CONTRACT_VERSION:
-            return self._error_response(
-                request_id=req.request_id,
-                reason_code=ReasonCode.SNTL_ERROR_SCHEMA_VERSION.value,
-                details={"error": "contract_version must be 3"},
                 latency_ms=self._latency_ms(start),
             )
 
@@ -92,7 +100,11 @@ class SentinelV3:
         decision = self._map_status_to_decision(sentinel_score.status)
 
         # Stable reason codes: keep minimal and contract-facing
-        reason_codes = [ReasonCode.SNTL_OK.value] if not sentinel_score.details else [ReasonCode.SNTL_V2_SIGNAL.value]
+        reason_codes = (
+            [ReasonCode.SNTL_OK.value]
+            if not sentinel_score.details
+            else [ReasonCode.SNTL_V2_SIGNAL.value]
+        )
 
         return {
             "contract_version": self.CONTRACT_VERSION,
@@ -100,7 +112,10 @@ class SentinelV3:
             "request_id": req.request_id,
             "context_hash": context_hash,
             "decision": decision,
-            "risk": {"score": float(sentinel_score.risk_score), "tier": self._tier_from_score(float(sentinel_score.risk_score))},
+            "risk": {
+                "score": float(sentinel_score.risk_score),
+                "tier": self._tier_from_score(float(sentinel_score.risk_score)),
+            },
             "reason_codes": reason_codes,
             "evidence": {
                 "features": {},  # keep empty to avoid leaking internals
@@ -149,7 +164,13 @@ class SentinelV3:
         except Exception:
             return {"_": "unavailable"}
 
-    def _error_response(self, request_id: str, reason_code: str, details: Dict[str, Any], latency_ms: int) -> Dict[str, Any]:
+    def _error_response(
+        self,
+        request_id: str,
+        reason_code: str,
+        details: Dict[str, Any],
+        latency_ms: int,
+    ) -> Dict[str, Any]:
         context_hash = canonical_sha256(
             {
                 "component": self.COMPONENT,
