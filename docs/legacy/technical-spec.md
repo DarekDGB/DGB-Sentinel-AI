@@ -1,5 +1,8 @@
 # Sentinel AI v2 – Technical Specification (Developer-Oriented)
 
+> **Legacy note:** This document reflects Sentinel AI v2-era concepts and is preserved for history.
+> Current authoritative specifications are `docs/CONTRACT.md` and `docs/ARCHITECTURE.md`.
+
 ## 1. Overview
 
 Sentinel AI v2 is the adversarial-hardened threat engine in the 3-layer DigiByte
