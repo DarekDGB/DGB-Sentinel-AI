@@ -4,9 +4,8 @@ from dataclasses import dataclass
 from typing import Any, Dict
 
 from .config import CircuitBreakerThresholds, SentinelConfig
-from .data_intake import TelemetrySnapshot, normalize_raw_telemetry
-from .model_loader import LoadedModel, load_and_verify_model, run_model_inference
-from .scoring import SentinelScore, compute_risk_score
+from .model_loader import LoadedModel, load_and_verify_model
+from .v3 import SentinelV3
 
 
 @dataclass
@@ -38,34 +37,42 @@ class SentinelClient:
                 # Fail-open approach: system continues using non-ML signals only.
                 self._model = None
 
+        # v3 evaluator (internal)
+        self._v3 = SentinelV3(thresholds=self._thresholds, model=self._model)
+
     def evaluate_snapshot(self, raw_telemetry: Dict[str, Any]) -> SentinelResult:
         """
         Evaluate a single telemetry snapshot and return a compact public result.
-        """
-        snapshot: TelemetrySnapshot = normalize_raw_telemetry(raw_telemetry)
 
-        # Convert structured telemetry into flat features for the scoring engine.
-        features: Dict[str, Any] = {
-            "entropy_score": (snapshot.entropy or {}).get("score", 0.0),
-            "mempool_score": (snapshot.mempool or {}).get("score", 0.0),
-            "reorg_score": (snapshot.reorg or {}).get("score", 0.0),
-            "entropy_drop": (snapshot.entropy or {}).get("drop", 0.0),
-            "mempool_anomaly": (snapshot.mempool or {}).get("anomaly", 0.0),
-            "reorg_depth": (snapshot.reorg or {}).get("depth", 0),
+        NOTE: v2 public API preserved.
+        Internally routes through Shield Contract v3 evaluator (adapter).
+        """
+        request_v3 = {
+            "contract_version": 3,
+            "component": "sentinel",
+            "request_id": "v2-evaluate_snapshot",
+            "telemetry": raw_telemetry,
+            "constraints": {"fail_closed": True},
         }
 
-        # Optional ML model contribution.
-        if self._model is not None:
-            model_score = run_model_inference(self._model, features)
-            features["model_score"] = model_score
+        response_v3 = self._v3.evaluate(request_v3)
 
-        sentinel_score: SentinelScore = compute_risk_score(
-            features=features,
-            thresholds=self._thresholds,
-        )
+        # Fail-closed: if v3 errors, return a safe v2-shaped failure
+        if response_v3.get("decision") == "ERROR":
+            return SentinelResult(
+                status="ERROR",
+                risk_score=0.0,
+                details=["SENTINEL_V3_ERROR"],
+            )
+
+        # Map back to v2 output exactly using the compatibility payload
+        details = (((response_v3.get("evidence") or {}).get("details")) or {})
+        v2_status = details.get("v2_status", "ERROR")
+        v2_risk_score = float(details.get("v2_risk_score", 0.0))
+        v2_details = details.get("v2_details", ["SENTINEL_V3_MISSING_V2_PAYLOAD"])
 
         return SentinelResult(
-            status=sentinel_score.status,
-            risk_score=sentinel_score.risk_score,
-            details=sentinel_score.details,
+            status=v2_status,
+            risk_score=v2_risk_score,
+            details=list(v2_details),
         )
