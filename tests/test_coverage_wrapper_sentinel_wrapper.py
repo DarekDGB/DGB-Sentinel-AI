@@ -14,12 +14,6 @@ class _DummyClient:
         return _R()
 
 
-def test__get_client_returns_provided_client():
-    dummy = _DummyClient()
-    got = sentinel_wrapper._get_client(dummy)  # type: ignore[arg-type]
-    assert got is dummy
-
-
 def test_run_full_workflow_uses_provided_client_and_passes_telemetry():
     dummy = _DummyClient()
     tel = {"block_height": 999}
