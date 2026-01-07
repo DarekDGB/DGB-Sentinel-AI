@@ -10,11 +10,11 @@ Later, DigiByte-Quantum-Adaptive-Core can plug into this.
 
 from __future__ import annotations
 
-from dataclasses import asdict
-from typing import Any, Dict, Optional
 import json
 import logging
+from dataclasses import asdict
 from datetime import datetime, timezone
+from typing import Any, Dict, Optional
 
 from .adaptive_event import AdaptiveEvent
 
@@ -61,16 +61,29 @@ def emit_adaptive_event(event: AdaptiveEvent) -> None:
     """
     try:
         payload = asdict(event)
-        logger.debug("AdaptiveEvent %s", json.dumps(payload, sort_keys=True))
+        logger.debug("AdaptiveEvent %s", json.dumps(payload, sort_keys=True, default=str))
     except Exception as e:  # pragma: no cover – defensive
         logger.error("Failed to log AdaptiveEvent: %s", e)
 
- def emit_adaptive_event_from_signal(
+
+def export_to_adaptive_core(event: AdaptiveEvent) -> None:
+    """
+    Alias kept for integration readability.
+
+    Today this simply calls emit_adaptive_event().
+    Later this can become the single integration point for
+    Adaptive Core transports (HTTP/gRPC/queue/etc).
+    """
+    emit_adaptive_event(event)
+
+
+def emit_adaptive_event_from_signal(
+    *,
     signal_name: str,
     severity: float,
     qri_delta: float = 0.0,
     layer: str = "sentinel",
-    context: dict | None = None,
+    context: Dict[str, Any] | None = None,
 ) -> None:
     """
     Convenience helper: take any Sentinel signal name and push it
@@ -84,12 +97,29 @@ def emit_adaptive_event(event: AdaptiveEvent) -> None:
             qri_delta=-0.15,
             context={"window": "30s", "chain": "DigiByte"},
         )
+
+    Notes:
+    - This does NOT alter Sentinel detection logic.
+    - This is a bridge that maps a signal into a structured AdaptiveEvent.
     """
+    ctx = dict(context or {})
+    ctx.setdefault("signal_name", signal_name)
+    ctx.setdefault("qri_delta", float(qri_delta))
+
     evt = build_adaptive_event(
-        layer=layer,
         anomaly_type=signal_name,
-        severity=severity,
-        qri_delta=qri_delta,
-        context=context or {},
+        severity="HIGH" if float(severity) >= 0.75 else "MEDIUM" if float(severity) >= 0.4 else "LOW",
+        qri_score=float(severity),
+        source="sentinel_signal",
+        metadata=ctx,
     )
+
+    # If caller overrides layer, respect it.
+    # (We keep build_adaptive_event layer default "sentinel" to keep v2 stable.)
+    try:
+        evt.layer = layer  # type: ignore[attr-defined]
+    except Exception:
+        # If AdaptiveEvent is frozen/immutable, we just keep default.
+        pass
+
     export_to_adaptive_core(evt)
