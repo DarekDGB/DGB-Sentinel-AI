@@ -1,7 +1,7 @@
 # Sentinel AI — Shield Contract v3
 
-This document defines the **authoritative contract** for interacting with
-**Sentinel AI v3**. Any integration that does not follow this contract is
+This document defines the **authoritative contract** for interacting with  
+**Sentinel AI v3**. Any integration that does not follow this contract is  
 considered **unsupported and unsafe**.
 
 ---
@@ -68,7 +68,34 @@ This guarantees:
 
 ---
 
-## 5. Output Schema (v3)
+## 5. Context Hashing & Canonicalization
+
+Sentinel AI computes `context_hash` as a **deterministic SHA-256 hash** of the
+canonical JSON representation of the request context.
+
+Canonicalization rules:
+- JSON keys are sorted
+- Numeric values are validated and finite
+- UTF-8 encoding is used
+- No locale-dependent behavior exists
+
+### Unicode Normalization Rule (Important)
+
+Sentinel AI **does not apply Unicode normalization** (e.g. NFC / NFD).
+
+This means:
+- Visually identical strings with different Unicode codepoint sequences  
+  (e.g. precomposed vs decomposed characters) **will produce different hashes**
+- Hashing is deterministic over **raw Unicode codepoints as provided**
+
+**Callers are responsible** for applying Unicode normalization *before*
+submitting requests if canonical equivalence is required.
+
+This behavior is intentional and contract-stable.
+
+---
+
+## 6. Output Schema (v3)
 
 Sentinel AI returns a versioned, deterministic response:
 
@@ -87,7 +114,7 @@ Sentinel AI returns a versioned, deterministic response:
 
 ---
 
-## 6. Reason Codes
+## 7. Reason Codes
 
 Reason codes are **stable identifiers**, not free-form messages.
 
@@ -104,7 +131,7 @@ Consumers must **not rely on string messages**, only codes.
 
 ---
 
-## 7. Compatibility
+## 8. Compatibility
 
 Sentinel AI maintains a **legacy v2 API** via an internal adapter.
 
@@ -115,7 +142,7 @@ Important rules:
 
 ---
 
-## 8. Integration Rules
+## 9. Integration Rules
 
 All consumers **must**:
 
@@ -128,7 +155,7 @@ Violation of these rules invalidates security guarantees.
 
 ---
 
-## 9. Non-Goals
+## 10. Non-Goals
 
 Sentinel AI explicitly does **not**:
 
@@ -140,7 +167,7 @@ Sentinel AI explicitly does **not**:
 
 ---
 
-## 10. Summary
+## 11. Summary
 
 Shield Contract v3 defines a **strict, minimal, deterministic interface**.
 
