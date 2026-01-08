@@ -13,9 +13,9 @@ from .wrapper.sentinel_wrapper import SentinelWrapper
 # -----------------------------
 
 app = FastAPI(
-    title="Sentinel AI v2 API",
-    description="Quantum-Resistant Threat Engine for DigiByte",
-    version="0.1.0",
+    title="Sentinel AI v3 API",
+    description="External analysis layer enforcing DigiByte Quantum Shield Contract v3.",
+    version="3.0.0",
 )
 
 # Single shared wrapper instance – stores the last result in Monitor
@@ -81,8 +81,9 @@ async def evaluate(req: EvaluateRequest) -> EvaluateResponse:
     try:
         result = wrapper.evaluate(req.telemetry)
     except Exception as exc:  # noqa: BLE001 – simplified for reference implementation
-        # In production, developers may replace this with full logging and error handling.
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        # Fail-closed: do not leak internal exception strings to clients by default.
+        # (Operators can inspect server logs in a real deployment.)
+        raise HTTPException(status_code=500, detail="internal_error") from exc
 
     return EvaluateResponse(
         status=result.status,
