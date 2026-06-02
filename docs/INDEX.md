@@ -13,6 +13,7 @@ Audits, integrations, and reviews must rely on these.
 - **Shield Contract (binding):** `CONTRACT.md`
 - **Architecture (role + flow):** `ARCHITECTURE.md`
 - **Upgrade Plan:** `upgrade/SENTINEL_AI_V3_UPGRADE_PLAN.md`
+- **Changelog:** `../CHANGELOG.md`
 - **Security Policy:** `../SECURITY.md`
 - **Auditor Summary:** `../AUDITOR_SUMMARY.md`
 
