@@ -15,7 +15,7 @@ from .wrapper.sentinel_wrapper import SentinelWrapper
 app = FastAPI(
     title="Sentinel AI v3 API",
     description="External analysis layer enforcing DigiByte Quantum Shield Contract v3.",
-    version="3.0.0",
+    version="3.1.0",
 )
 
 # Single shared wrapper instance – stores the last result in Monitor
