@@ -146,6 +146,7 @@ def test_cli_unknown_command_return_branch(monkeypatch):
 def test_cli_main_module_entrypoint_version(monkeypatch):
     monkeypatch.setattr(sys, "argv", ["sentinel-ai", "version"])
     monkeypatch.setattr(sys, "stdout", io.StringIO())
+    monkeypatch.delitem(sys.modules, "sentinel_ai_v2.cli", raising=False)
 
     with pytest.raises(SystemExit) as exc:
         runpy.run_module("sentinel_ai_v2.cli", run_name="__main__")
