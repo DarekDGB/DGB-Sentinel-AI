@@ -16,8 +16,8 @@ def test_server_app_exists_and_status_endpoint(monkeypatch):
     # Avoid depending on internal Monitor state: patch wrapper.last_status
     monkeypatch.setattr(server.wrapper, "last_status", lambda: {"status": "OK", "risk_score": 0.1, "details": []})
 
-    # Call the endpoint function directly (async)
+    # Call the endpoint function directly (async) without relying on a global event loop.
     import asyncio
-    resp = asyncio.get_event_loop().run_until_complete(server.status())
+    resp = asyncio.run(server.status())
     assert resp.status == "OK"
     assert resp.risk_score == 0.1
