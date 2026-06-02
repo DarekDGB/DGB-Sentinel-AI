@@ -10,7 +10,7 @@
 
 ## Executive Summary
 
-Sentinel AI v3 is a **read-only, deterministic telemetry analysis component** designed to operate as a non-authoritative security layer within the DigiByte ecosystem. It **does not execute, enforce, or modify state**. All behavior is governed by a strict, fail-closed contract (v3) with CI-enforced tests and ≥90% coverage.
+Sentinel AI v3 is a **read-only, deterministic telemetry analysis component** designed to operate as a non-authoritative security layer within the DigiByte ecosystem. It **does not execute, enforce, or modify state**. All behavior is governed by a strict, fail-closed contract (v3) with CI-enforced tests and 100% coverage.
 
 The system is suitable for environments that require **predictable, auditable security signals** without introducing execution risk.
 
@@ -73,7 +73,7 @@ These non-goals are documented and enforced by architecture, code structure, and
 
 ## Testing & CI
 
-- ≥90% coverage enforced in CI
+- 100% coverage enforced in CI
 - Regression-locked v2 compatibility
 - Toxic telemetry / DoS-style regression tests
 - Determinism tests (hashing, validation)
