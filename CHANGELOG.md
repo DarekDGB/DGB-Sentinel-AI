@@ -7,6 +7,37 @@ Breaking changes are only introduced with a **major version bump**.
 
 ---
 
+## [v3.1.0] — 2026-06-02
+
+### 🛡️ Shield Hardening Release
+
+This release hardens Sentinel AI for the Shield v3.1.0 upgrade track while preserving the existing Shield Contract v3 surface.
+
+#### Changed
+- Package and runtime version metadata updated to `3.1.0`.
+- README, security references, auditor summary, and documentation index aligned with the 100% coverage gate.
+- Adaptive Core bridge availability tests isolated from environment state.
+- Deprecated naive UTC timestamp usage replaced with timezone-aware UTC.
+
+#### Fixed
+- Removed CLI module-entrypoint runtime warning in tests.
+- Replaced deprecated event-loop test usage with `asyncio.run(...)`.
+- Cleaned release documentation so v3.1.0 reflects the hardened test and CI posture.
+
+#### Verification
+- 95 tests passing.
+- 704 statements covered.
+- 0 missed statements.
+- 100% coverage enforced in CI.
+- Warning-free test output verified.
+
+#### Security
+- No new Sentinel authority was added.
+- Sentinel remains read-only, non-consensus, non-signing, and non-executing.
+- Fail-closed and deterministic Shield Contract v3 behavior remains unchanged.
+
+---
+
 ## [v3.0.0] — 2026-01-07
 
 ### 🚀 Major Release — Shield Contract v3
