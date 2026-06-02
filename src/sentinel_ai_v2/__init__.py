@@ -9,7 +9,7 @@ Note:
 - The contract, behavior, and guarantees implemented here are v3.
 """
 
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 __all__ = [
     "__version__",
