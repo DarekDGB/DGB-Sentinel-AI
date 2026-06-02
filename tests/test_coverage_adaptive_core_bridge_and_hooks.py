@@ -6,7 +6,9 @@ from sentinel_ai_v2.feedback_hooks import send_feedback_to_adaptive
 from sentinel_ai_v2.heartbeat import shield_heartbeat
 
 
-def test_bridge_unavailable_is_safe_noop():
+def test_bridge_unavailable_is_safe_noop(monkeypatch):
+    monkeypatch.setattr(acb, "AdaptiveCoreInterface", None)
+    monkeypatch.setattr(acb, "ThreatPacket", None)
     bridge = acb.SentinelAdaptiveCoreBridge()
     assert bridge.is_available is False
     # No exceptions:
@@ -38,7 +40,7 @@ def test_bridge_available_paths(monkeypatch):
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-    # Force “available”
+    # Force âavailableâ
     monkeypatch.setattr(acb, "AdaptiveCoreInterface", DummyInterface)
     monkeypatch.setattr(acb, "ThreatPacket", DummyPacket)
 
