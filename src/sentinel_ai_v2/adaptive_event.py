@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 
@@ -27,4 +27,4 @@ class AdaptiveEvent:
     details: Optional[str] = None
 
     # IMPORTANT: default_factory ensures a fresh timestamp per event (not import-time).
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
