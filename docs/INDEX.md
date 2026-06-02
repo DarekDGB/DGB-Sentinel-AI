@@ -13,7 +13,6 @@ Audits, integrations, and reviews must rely on these.
 - **Shield Contract (binding):** `CONTRACT.md`
 - **Architecture (role + flow):** `ARCHITECTURE.md`
 - **Upgrade Plan:** `upgrade/SENTINEL_AI_V3_UPGRADE_PLAN.md`
-- **Changelog:** `../CHANGELOG.md`
 - **Security Policy:** `../SECURITY.md`
 - **Auditor Summary:** `../AUDITOR_SUMMARY.md`
 
@@ -35,7 +34,7 @@ These documents help integrators and partners use Sentinel AI correctly.
 These describe how guarantees are enforced.
 
 - CI workflow: `.github/workflows/tests.yml`
-- Coverage gate: ≥90% enforced in CI
+- Coverage gate: 100% enforced in CI
 - Determinism & toxic telemetry regression tests (see `tests/`)
 
 ---
