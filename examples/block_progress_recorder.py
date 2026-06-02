@@ -11,7 +11,7 @@ Sentinel AI v2 can feed dashboards.
 import json
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sentinel_ai_v2.telemetry_monitor import (
     init_block_progress_monitor,
@@ -55,5 +55,5 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    print(f"[{datetime.utcnow().isoformat()}] Block progress recorder started.")
+    print(f"[{datetime.now(timezone.utc).isoformat()}] Block progress recorder started.")
     main()
