@@ -1,306 +1,244 @@
-# 🛡️ DGB Sentinel AI (Shield Contract v3)
+# 🛡️ DGB Sentinel AI v3.2.0
 
-[![CI](https://github.com/DarekDGB/DGB-Sentinel-AI/actions/workflows/tests.yml/badge.svg)](https://github.com/DarekDGB/DGB-Sentinel-AI/actions)
-[![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Contract](https://img.shields.io/badge/Shield%20Contract-v3-black.svg)](docs/CONTRACT.md)
-[![Status](https://img.shields.io/badge/status-v3.1.0%20hardening-success.svg)](#)
+![Tests](https://github.com/DarekDGB/DGB-Sentinel-AI/actions/workflows/tests.yml/badge.svg)
+![Coverage 100%](https://img.shields.io/badge/coverage-100%25-brightgreen)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Status](https://img.shields.io/badge/status-ORCHESTRATOR--BOUNDARY--LOCKED-critical)
 
-### DigiByte Quantum Shield — External Telemetry Analysis & Threat Signal Generation
-**Architecture by @DarekDGB — MIT Licensed**
+**Deterministic Threat Signal Layer • Observation → Signal Evidence**  
+**Architecture & Implementation by @DarekDGB — MIT Licensed**
 
 ---
 
-## Overview
+## Purpose
 
-**Sentinel AI** is the **external, non-consensus telemetry analysis layer** of the **DigiByte Quantum Shield**.
+**DGB Sentinel AI v3.2.0** is the deterministic threat-signal layer of the **DigiByte Quantum Shield**.
 
-It ingests **read-only signals** such as telemetry, observations, monitors, and external risk indicators. It evaluates those signals under **Shield Contract v3** and emits **deterministic threat signals** for higher layers to consume.
+Sentinel AI evaluates observed defensive context and emits structured threat-signal evidence for the Shield stack.
 
-Sentinel AI is intentionally **non-authoritative**.
+Sentinel may help identify:
 
-**Sentinel AI does NOT and MUST NOT:**
+- anomalous wallet behavior
+- suspicious transaction context
+- unsafe runtime indicators
+- hostile or malformed signal patterns
+- defensive escalation conditions
 
-- change consensus
+Sentinel does **not**:
+
 - sign transactions
-- execute wallet actions
-- gain authority over funds
-- enforce mitigation or policy
-- override Guardian Wallet, ADN, QWG, DQSN, Shield Orchestrator, or AdamantineOS decisions
+- broadcast transactions
+- hold, derive, or access private keys
+- modify DigiByte consensus
+- approve AdamantineOS execution directly
+- override the Shield Orchestrator
+- act as final execution authority
 
-> **Glass-box rule:** Sentinel can **observe and report**, never **execute or override**.
+Sentinel is an **evidence-producing component**.
 
 ---
 
-## Where Sentinel AI Sits (Architecture)
+## Position in the DigiByte Quantum Shield
 
 ```text
-┌──────────────────────────────────────────────┐
-│        DigiByte Network / Environment         │
-│                                              │
-│  • Nodes                                     │
-│  • Mempool                                   │
-│  • Chain state                               │
-│  • Telemetry / Metrics                       │
-│  • External observations                     │
-└───────────────────────┬──────────────────────┘
-                        │   (read-only signals)
-                        ▼
-┌──────────────────────────────────────────────┐
-│              Sentinel AI (v3)                 │
-│  External Telemetry Analysis Layer            │
-│                                              │
-│  • Strict input validation (fail-closed)     │
-│  • Deterministic evaluation                  │
-│  • Stable reason codes                       │
-│  • Canonical context_hash (SHA-256)          │
-│  • Isolated Adaptive Core bridge tests       │
-│                                              │
-│  ❌ No signing                               │
-│  ❌ No execution                             │
-│  ❌ No authority                             │
-└───────────────────────┬──────────────────────┘
-                        │   (signals only)
-                        ▼
-┌──────────────────────────────────────────────┐
-│      External Consumers / Higher Layers       │
-│                                              │
-│  • Guardian Wallet                            │
-│  • Active Defense Network (ADN)              │
-│  • Adaptive Core                              │
-│  • Shield Orchestrator                        │
-│  • Operators / Dashboards                    │
-│                                              │
-│  (Decision & enforcement happen here)        │
-└──────────────────────────────────────────────┘
+┌───────────────────────────────────────────────┐
+│              AdamantineOS                     │
+│   Consumes only Shield Orchestrator receipt   │
+└───────────────────────────────────────────────┘
+                       ▲
+                       │ deterministic receipt only
+┌───────────────────────────────────────────────┐
+│          Shield Orchestrator v3               │
+│   Final Shield aggregation + receipt boundary │
+└───────────────────────────────────────────────┘
+                       ▲
+                       │ component verdict evidence
+┌───────────────────────────────────────────────┐
+│               DQSN v3                         │
+│   Deterministic signal aggregation            │
+└───────────────────────────────────────────────┘
+                       ▲
+                       │ threat-signal evidence
+┌───────────────────────────────────────────────┐
+│            Sentinel AI v3                     │
+│   Deterministic observation → signal layer    │
+└───────────────────────────────────────────────┘
 ```
+
+Sentinel emits evidence.
+
+The Shield Orchestrator is the final Shield receipt boundary for AdamantineOS handoff.
 
 ---
 
-## Shield Contract v3 — What It Guarantees
+## Core Mission
 
-Sentinel AI v3 is governed by Shield Contract v3.
+### Deterministic Observation → Signal
 
-The contract guarantees:
+Sentinel converts validated defensive observations into deterministic threat-signal evidence.
 
-- deterministic evaluation
-- versioned contract semantics
-- strict input validation
+Same valid input must always produce the same output.
+
+### Fail-Closed by Default
+
+Sentinel must reject unsafe input conditions, including:
+
+- malformed input
+- unsupported contract versions
+- unknown strict fields
+- unsafe numeric values
+- oversized payloads
+- unserialisable data
+- ambiguity affecting authority or auditability
+
+### Evidence Only
+
+Sentinel output is not final authority.
+
+Sentinel signals must be treated as component evidence for aggregation and orchestration.
+
+Raw Sentinel output must not be consumed by AdamantineOS as final signing, execution, or approval authority.
+
+---
+
+## v3.2.0 Manifest / Verdict Lock
+
+Sentinel AI v3.2.0 includes the Shield manifest / registry / canonical verdict lock required before AdamantineOS integration.
+
+The v3.2.0 lock enforces:
+
+- component identity discipline
+- contract version discipline
+- stable reason ID registration
+- stable evidence-family registration
+- deterministic canonical verdict data
+- fail-closed rejection of malformed verdict inputs
+- Orchestrator-first handoff assumptions
+
+Sentinel remains evidence-only.
+
+It cannot:
+
+- sign
+- broadcast
+- hold keys
+- expand authority
+- override the Shield Orchestrator
+- approve AdamantineOS execution directly
+
+See:
+
+- `docs/v3/MANIFEST.md`
+- `docs/v3/REASON_IDS.md`
+- `docs/v3/EVIDENCE_FAMILIES.md`
+- `docs/v3/TEST_MATRIX.md`
+- `docs/v3/PROOF_PACK.md`
+
+---
+
+## Repository Layout
+
+```text
+DGB-Sentinel-AI/
+├─ README.md
+├─ LICENSE
+├─ CHANGELOG.md
+├─ SECURITY.md
+├─ docs/
+│  └─ v3/
+│     ├─ EVIDENCE_FAMILIES.md
+│     ├─ MANIFEST.md
+│     ├─ PROOF_PACK.md
+│     ├─ REASON_IDS.md
+│     └─ TEST_MATRIX.md
+├─ tests/
+│  └─ test_v3_2_manifest_verdict_lock.py
+└─ src/
+   └─ sentinel_ai_v2/
+      └─ contracts/
+         └─ v3_2_lock.py
+```
+
+Note: the package path may retain legacy `sentinel_ai_v2` naming, but the v3.2.0 files define the Shield v3.2.0 manifest / verdict lock for current integration work.
+
+---
+
+## Tests & Security Guarantees
+
+Security and regression tests enforce:
+
+- deterministic signal behavior
 - fail-closed behavior
-- stable reason codes
-- stable hashing anchors
-- canonical `context_hash` generation
-- no silent fallback
+- strict manifest discipline
+- stable reason IDs
+- stable evidence families
+- canonical verdict lock behavior
 - no hidden authority
+- no silent fallback
+- no Orchestrator bypass assumption
 
-See `docs/CONTRACT.md` for the authoritative specification.
+Tests define truth.
 
----
-
-## Determinism Guarantees
-
-Sentinel AI v3 is designed so that:
-
-- same valid input produces the same output
-- invalid input fails closed
-- schema behavior is stable
-- `context_hash` uses canonical SHA-256 hashing
-- reason codes remain stable
-- behavior is reproducible across Python 3.10, 3.11, and 3.12
-- test outcomes do not depend on whether Adaptive Core is installed in the environment
+No release is locked unless CI proves the contract surface.
 
 ---
 
-## Adaptive Core Bridge Boundary
+## v3.2.0 Status
 
-Sentinel AI may optionally report telemetry-derived signals into Adaptive Core through bridge logic.
+Sentinel AI is aligned with the Shield v3.2.0 integration-boundary track:
 
-This bridge is **not an authority path**.
+- package metadata set to `3.2.0`
+- manifest / reason ID / evidence-family docs are present
+- v3.2.0 verdict lock tests are present
+- deterministic contract behavior is preserved
+- no consensus authority is added
+- no signing, broadcasting, key custody, or hidden execution authority is added
+- AdamantineOS must consume Shield through the Orchestrator receipt only
 
-The Adaptive Core bridge must remain:
-
-- optional
-- deterministic
-- safe when unavailable
-- isolated in tests
-- non-executing
-- non-consensus
-- unable to convert Sentinel observations into direct enforcement
-
-The v3.1.0 hardening track includes deterministic test isolation for the bridge availability path. Tests now cover the safe no-op behavior explicitly instead of depending on whether Adaptive Core happens to be installed in the environment.
+Do **not** tag v3.2.0 until the final roadmap checklist, fresh ZIP audit, CI proof, and Red Team report are complete.
 
 ---
 
-## Quick Start (Integration)
+## Shield v3 Invariants
 
-```python
-from sentinel_ai_v2.v3 import SentinelV3
-from sentinel_ai_v2.config import CircuitBreakerThresholds
+Sentinel AI follows the Shield v3 baseline invariants:
 
-sentinel = SentinelV3(
-    thresholds=CircuitBreakerThresholds(),
-    model=None,
-)
+- **Deny-by-default** — anything not explicitly allowed is rejected.
+- **Fail-closed** — invalid, ambiguous, partial, or unsafe input is rejected.
+- **Deterministic execution** — same valid input must produce the same output.
+- **No silent fallback** — failures must surface as explicit reasoned rejections.
+- **Evidence-only output** — Sentinel evidence does not approve execution.
+- **Orchestrator-first handoff** — AdamantineOS receives Shield state only through the deterministic Orchestrator receipt.
 
-request = {
-    "contract_version": 3,
-    "component": "sentinel",
-    "request_id": "sig_001",
-    "telemetry": {"block_height": 12345},
-    "constraints": {"max_latency_ms": 2500},
-}
-
-response = sentinel.evaluate(request)
-
-if response["decision"] == "ERROR":
-    raise RuntimeError(response["reason_codes"])
-```
+Any violation of these invariants is a security defect.
 
 ---
 
-## Reason Codes
+## Documentation
 
-Sentinel returns stable identifiers such as:
-
-- `SNTL_OK`
-- `SNTL_ERROR_SCHEMA_VERSION`
-- `SNTL_ERROR_UNKNOWN_TOP_LEVEL_KEY`
-- `SNTL_ERROR_BAD_NUMBER`
-- `SNTL_ERROR_TELEMETRY_TOO_LARGE`
-
-See `src/sentinel_ai_v2/contracts/v3_reason_codes.py`.
+- Manifest: `docs/v3/MANIFEST.md`
+- Reason IDs: `docs/v3/REASON_IDS.md`
+- Evidence Families: `docs/v3/EVIDENCE_FAMILIES.md`
+- Test Matrix: `docs/v3/TEST_MATRIX.md`
+- Proof Pack: `docs/v3/PROOF_PACK.md`
 
 ---
 
-## Backwards Compatibility
+## Contribution Policy
 
-Legacy v2 requests are accepted through an internal adapter, but they are **always validated under v3 rules**.
+Rules:
 
-v2 compatibility cannot bypass v3 enforcement.
-
-Legacy support is allowed only when it preserves:
-
-- fail-closed validation
-- deterministic output
-- stable reason codes
-- v3 contract authority
-- no hidden escalation path
-
----
-
-## Tests & Guarantees
-
-Sentinel AI v3 is regression-locked with tests that enforce:
-
-- strict Shield Contract v3 validation
-- fail-closed behavior
-- deterministic `context_hash` generation
-- bad number rejection
-- unknown key rejection
-- toxic telemetry rejection
-- telemetry size limits
-- v2 → v3 no-drift behavior
-- API smoke coverage
-- CLI smoke coverage
-- server endpoint coverage
-- model loader coverage
-- scoring and correlation coverage
-- wrapper workflow coverage
-- Adaptive Core bridge and hook coverage
-- Adaptive Core bridge unavailable-path isolation
-- deterministic safe no-op behavior when Adaptive Core is unavailable
-
-The CI workflow enforces:
-
-```bash
-pytest --cov=sentinel_ai_v2 --cov-report=term-missing --cov-fail-under=100 -q
-```
-
-Current verified result:
-
-```text
-95 passed
-TOTAL 704 statements, 0 missed
-Coverage 100.00%
-```
-
-**Tests define truth. No release is considered locked unless CI proves 100% coverage.**
-
----
-
-## Continuous Integration
-
-The CI workflow runs on:
-
-- Python 3.10
-- Python 3.11
-- Python 3.12
-
-The workflow performs:
-
-- repository checkout
-- Python setup
-- pip upgrade
-- editable package install with development dependencies
-- syntax check with `compileall`
-- full package test suite
-- 100% coverage gate
-
-See `.github/workflows/tests.yml`.
-
----
-
-## Status
-
-**Sentinel AI v3 is COMPLETE, LOCKED, and hardened to the Shield v3.1.0 coverage and determinism standard.**
-
-Stable release baseline:
-
-- `v3.0.0`
-
-Current hardening track:
-
-- `v3.1.0`
-
-Current Sentinel hardening proof:
-
-- 95 tests passing
-- 704 statements covered
-- 0 missed statements
-- 100% coverage enforced in CI
-- Adaptive Core bridge availability tests isolated from environment state
-
-Further changes require:
-
-- contract version review
-- regression tests
-- CI proof
-- no weakening of the 100% coverage gate
-- no undocumented behavior change
-- no new authority path
-- no fail-open behavior
-
----
-
-## Security Position
-
-Sentinel AI is a signal layer only.
-
-A Sentinel signal may inform another component, but it must not become execution authority by itself.
-
-Required security posture:
-
-- **observe only**
-- **report only**
-- **fail closed**
-- **deny silent fallback**
-- **preserve human/governance gates at higher layers**
-- **never allow AI/telemetry output to become direct authority**
+- No consensus-touching behavior.
+- No signing or broadcasting behavior.
+- No private-key custody behavior.
+- No AdamantineOS direct execution approval.
+- Deterministic evidence only.
+- Tests required for contract changes.
+- No bypass of the Shield Orchestrator receipt boundary.
 
 ---
 
 ## License
 
 MIT License  
-© 2025 DarekDGB
+© 2025 **DarekDGB**
