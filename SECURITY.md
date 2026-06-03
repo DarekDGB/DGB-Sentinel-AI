@@ -1,23 +1,187 @@
-# Security Policy
+# Security Policy — DGB Sentinel AI
 
-**Project:** DGB Sentinel AI  
-**Component:** Sentinel AI (Shield Layer v3)  
-**Author:** DarekDGB  
+**Repository:** DGB-Sentinel-AI  
+**Component:** Sentinel AI v3 — Threat Signal Layer  
+**Maintainer:** DarekDGB  
 **License:** MIT
+
+This document defines the security policy and disclosure process for DGB Sentinel AI, with a focus on the **Shield v3.2.0 manifest / verdict boundary**.
 
 ---
 
-## Scope of This Security Policy
+## Supported Versions
 
-This security policy applies **only** to the Sentinel AI codebase and its
-documented interfaces under **Shield Contract v3**.
+Only the current Shield v3 Sentinel surface is supported and security-maintained for new Shield work.
 
-Sentinel AI is a **read-only, non-authoritative security component**.
-It does **not** hold private keys, execute transactions, or modify blockchain
-state.
+| Component | Status |
+|---|---|
+| Sentinel AI v3.2.0 | ✅ Supported — current integration-boundary hardening surface |
+| Earlier v3.x | ✅ Supported only as historical baseline where applicable |
+| Older archived behavior | ❌ Unsupported |
 
-Reports that assume Sentinel has execution or enforcement authority are
-considered **out of scope** by design.
+Legacy documentation may remain in the repository for historical reference, but it is **non-authoritative** for v3.2.0 security behavior.
+
+---
+
+## Security Model
+
+Sentinel AI is a **deterministic threat-signal evidence layer**.
+
+Security is enforced through:
+
+- strict input validation
+- deterministic outputs
+- stable reason codes
+- stable evidence families
+- canonical context hashing
+- fail-closed behavior
+- no hidden authority
+- tests for manifest / verdict behavior
+
+Sentinel AI is **consensus-neutral**.
+
+It does not:
+
+- alter DigiByte consensus rules
+- sign transactions
+- broadcast transactions
+- hold, derive, or access private keys
+- approve AdamantineOS execution directly
+- override the Shield Orchestrator
+
+Sentinel produces evidence only.
+
+---
+
+## Non-Negotiable Design Invariants
+
+### 1. Fail-Closed by Default
+
+Any invalid, ambiguous, incomplete, unsafe, or malformed input must produce an explicit rejection path.
+
+Expected fail-closed behavior includes:
+
+- deterministic reject decision
+- explicit reason code
+- no silent fallback
+- no implicit allow
+- no authority escalation
+
+### 2. Determinism
+
+The same valid input must always produce the same output.
+
+Contract behavior must not depend on:
+
+- timestamps
+- randomness
+- environment state
+- network state
+- file-system state
+- dictionary iteration order
+- runtime-dependent side effects
+
+Canonical hashes must be reproducible.
+
+### 3. Evidence-Only Authority
+
+Sentinel may:
+
+- observe defensive context
+- classify local threat indicators
+- produce deterministic threat-signal evidence
+- provide evidence to DQSN or the Shield Orchestrator path
+
+Sentinel must never:
+
+- execute cryptographic signing
+- modify consensus behavior
+- perform final approval
+- approve AdamantineOS execution directly
+- override the Shield Orchestrator
+- create hidden authority through fallback behavior
+
+### 4. No Silent Fallbacks
+
+All error paths must be explicit, deterministic, and test-covered.
+
+A fallback that changes authority, weakens validation, or allows execution is a security defect.
+
+---
+
+## v3.2.0 Security Boundary
+
+The v3.2.0 boundary locks Sentinel AI into the Shield manifest / verdict / receipt upgrade path.
+
+Sentinel component verdicts are **evidence only**.
+
+Sentinel must not be treated as final execution authority.
+
+AdamantineOS must consume Shield decisions only through the deterministic **Shield Orchestrator receipt**.
+
+Raw Sentinel outputs must not be consumed directly by AdamantineOS as final signing, execution, or approval authority.
+
+A Shield `ALLOW` result only permits AdamantineOS to continue its own checks.
+
+It is **not** final signing or execution approval.
+
+---
+
+## Fail-Closed Requirements
+
+The following conditions must reject deterministically:
+
+- missing required verdict data
+- malformed verdict data
+- unknown fields in strict contract paths
+- duplicated authority claims
+- unknown reason IDs
+- unknown evidence families
+- mismatched component identity
+- mismatched contract version
+- mismatched context hash
+- unsafe or unserialisable input
+- non-canonical verdict data
+- ambiguity affecting authority, determinism, or auditability
+
+---
+
+## Security Testing
+
+Security guarantees are enforced through tests covering:
+
+- fail-closed behavior
+- deterministic output behavior
+- unsupported contract versions
+- reason-code stability
+- evidence-family validation
+- manifest/verdict alignment
+- Orchestrator-first boundary assumptions
+- regression protection against behavior drift
+
+Security-sensitive changes must include tests.
+
+Tests define truth.
+
+Documentation must never claim behavior that tests do not enforce.
+
+---
+
+## Release Requirements
+
+No Sentinel AI v3.2.0 release should be tagged unless all of the following are true:
+
+- roadmap checklist is complete
+- tests pass locally or in CI
+- coverage gate remains satisfied
+- manifest files are present and aligned
+- reason IDs are documented and tested
+- evidence families are documented and tested
+- verdict boundary tests pass
+- Orchestrator receipt boundary is respected
+- final fresh ZIP audit is complete
+- Red Team report is complete
+- no docs-vs-tests mismatch remains
 
 ---
 
@@ -25,90 +189,83 @@ considered **out of scope** by design.
 
 If you believe you have found a security issue:
 
-1. **Do not publish exploit details in a public issue.**
-2. Prefer **GitHub Security Advisories** (private reporting), if available.
-3. If advisories are not available, open an issue clearly marked **SECURITY**
-   with **minimal details** and wait for further instructions.
+1. Do **not** disclose it publicly first.
+2. Open a private security advisory through GitHub if available.
+3. Alternatively, contact the maintainer through the GitHub profile: **@DarekDGB**.
 
-Please allow reasonable time for triage before requesting updates.
+Please include:
 
----
+- clear description of the issue
+- steps to reproduce, if applicable
+- expected behavior
+- actual behavior
+- affected commit hash or tag
+- potential security impact
 
-## What to Include in a Report
-
-To help validate and fix issues efficiently, include:
-
-- **Impact**  
-  What an attacker could realistically achieve *within Sentinelâs scope*.
-
-- **Reproduction steps**  
-  Clear, minimal steps (safe and non-destructive if possible).
-
-- **Expected vs actual behavior**  
-  Especially regarding fail-closed semantics or determinism.
-
-- **Evidence**  
-  Logs, screenshots, or test cases that support the claim.
+Coordinated disclosure is strongly encouraged.
 
 ---
 
-## In-Scope Vulnerabilities
+## In Scope
 
-Examples of valid security reports include:
+Security issues in scope include:
 
-- Contract validation bypasses
-- Non-deterministic behavior for identical inputs
-- Incorrect `context_hash` generation
-- Fail-open conditions on malformed input
-- DoS vectors via unbounded recursion, payload size, or numeric edge cases
-- Inconsistencies between documented and implemented Shield Contract v3 rules
-
----
-
-## Out-of-Scope Reports
-
-The following are **explicitly out of scope**:
-
-- Requests for new features or expanded authority
-- Issues related to transaction signing or fund control
-- Consensus, mining, or DigiByte Core behavior
-- Hypothetical attacks requiring Sentinel to execute actions it does not support
-- Vulnerabilities in external systems consuming Sentinel outputs
-
-Such reports may be closed without action.
+- Sentinel threat-signal contract behavior
+- determinism violations
+- fail-closed bypasses
+- reason ID ambiguity
+- evidence-family ambiguity
+- manifest/verdict mismatch
+- context hash mismatch
+- Orchestrator boundary bypass risk
+- AdamantineOS raw-output bypass risk
+- CI or test coverage gaps affecting security
 
 ---
 
-## Disclosure Philosophy
+## Out of Scope
 
-This repository follows **responsible disclosure** principles:
+The following are out of scope unless they create a direct security defect:
 
-- Validated issues are fixed promptly
-- Weaponized details are not published before a patch exists
-- Public disclosure occurs only after remediation or mitigation guidance
-
-Security fixes may include:
-- Contract tightening
-- Additional validation
-- New regression tests
-- CI enforcement updates
+- DigiByte consensus vulnerabilities
+- mining-layer issues
+- wallet UI preferences
+- performance tuning
+- cosmetic documentation changes
+- non-security refactors
+- unsupported archived behavior
 
 ---
 
-## Security References
+## Security Updates
 
-- **Shield Contract v3:** `docs/CONTRACT.md`
-- **Auditor Summary:** `docs/AUDITOR_SUMMARY.md`
-- **Architecture:** `docs/ARCHITECTURE.md`
+Security fixes may:
 
-These documents define Sentinel AIâs security boundaries and guarantees.
+- tighten validation
+- improve fail-closed behavior
+- add negative tests
+- update documentation
+- clarify reason IDs or evidence families
+
+Breaking changes to security semantics require:
+
+- documentation updates
+- explicit version notes
+- regression tests
+- coverage proof
 
 ---
 
-## Final Note
+## Disclaimer
 
-Any change that weakens **determinism**, **fail-closed behavior**, or
-**non-authoritative design** will be treated as a **security regression**
-and rejected.
+This software is provided **as-is**, without warranty of any kind.
 
-This policy is binding for contributors and integrators.
+Use at your own risk.
+
+---
+
+## Final Security Rule
+
+Any change that weakens determinism, fail-closed behavior, explicit authority boundaries, evidence-only behavior, or the Orchestrator-first receipt model must be rejected.
+
+© 2025 DarekDGB
