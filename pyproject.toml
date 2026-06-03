@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dgb-sentinel-ai"
-version = "3.0.0"
+version = "3.2.0"
 description = "Sentinel AI — external telemetry analysis layer enforcing Shield Contract v3."
 readme = "README.md"
 license = { text = "MIT" }
