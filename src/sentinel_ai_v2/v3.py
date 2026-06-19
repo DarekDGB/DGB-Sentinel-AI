@@ -152,12 +152,14 @@ class SentinelV3:
     @staticmethod
     def _map_status_to_decision(status: str) -> str:
         s = (status or "").strip().upper()
-        if s in {"OK", "ALLOW", "SAFE", "GREEN"}:
+        if s in {"OK", "ALLOW", "SAFE", "GREEN", "NORMAL"}:
             return "ALLOW"
-        if s in {"WARN", "WARNING", "CAUTION", "YELLOW"}:
+        if s in {"WARN", "WARNING", "CAUTION", "YELLOW", "ELEVATED"}:
             return "WARN"
         if s in {"ERROR"}:
             return "ERROR"
+        if s in {"HIGH", "CRITICAL", "BLOCK", "DENY", "DENIED"}:
+            return "BLOCK"
         return "BLOCK"  # deny-by-default
 
     @staticmethod
