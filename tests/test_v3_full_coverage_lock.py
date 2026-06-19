@@ -257,8 +257,12 @@ def test_v3_remaining_branches(monkeypatch):
     assert sentinel._tier_from_score(0.75) == "CRITICAL"
 
     assert sentinel._map_status_to_decision("ok") == "ALLOW"
+    assert sentinel._map_status_to_decision("normal") == "ALLOW"
     assert sentinel._map_status_to_decision("warn") == "WARN"
+    assert sentinel._map_status_to_decision("elevated") == "WARN"
     assert sentinel._map_status_to_decision("error") == "ERROR"
+    assert sentinel._map_status_to_decision("high") == "BLOCK"
+    assert sentinel._map_status_to_decision("critical") == "BLOCK"
     assert sentinel._map_status_to_decision("unexpected") == "BLOCK"
 
     class BrokenThresholds:
