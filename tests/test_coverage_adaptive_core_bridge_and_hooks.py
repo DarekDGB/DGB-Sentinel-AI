@@ -40,7 +40,7 @@ def test_bridge_available_paths(monkeypatch):
         def __init__(self, **kwargs):
             self.kwargs = kwargs
 
-    # Force âavailableâ
+    # Force the available path.
     monkeypatch.setattr(acb, "AdaptiveCoreInterface", DummyInterface)
     monkeypatch.setattr(acb, "ThreatPacket", DummyPacket)
 
