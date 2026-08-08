@@ -1,16 +1,27 @@
-Sentinel AI v2 – Whitepaper
-Quantum-Resistant Threat Engine for the DigiByte Ecosystem
+# Sentinel AI v2 - Historical Whitepaper
+
+## Quantum-Resistant Threat Engine Concept for the DigiByte Ecosystem
 
 > **Legacy note:** This document reflects Sentinel AI v2-era concepts and is preserved for history.
-> Current authoritative specifications are `docs/CONTRACT.md` and `docs/ARCHITECTURE.md`.
+> It is historical and non-authoritative, does not describe current runtime or
+> deployment proof, and must not be used for current integration decisions.
+> Current authoritative specifications are `docs/CONTRACT.md`,
+> `docs/ARCHITECTURE.md`, and `docs/v4/CONTRACT.md`.
 
-Author: Darek (@Darek_DGB)
-Engineering: Angel (AI Assistant)
+Author attribution: DarekDGB
 Version: 2.0
-Status: Open Specification
+Status: Historical and non-authoritative
+
+The designs, APIs, controls, and future extensions below are preserved as
+v2-era concepts. They are not claims that those features exist in the current
+repository. This document grants no transaction-signing, broadcast, DigiByte
+consensus, wallet-custody, policy, approval, or execution authority. Current
+Sentinel AI produces component evidence only, the Shield Orchestrator produces
+the Shield receipt, and AdamantineOS remains the final fail-closed policy and
+execution boundary.
 
 1. Introduction
-The next decade introduces threats such as rented hashrate farms, industrial-scale 51% attacks, AI-driven fraud, mempool automation, and quantum computing. DigiByte requires an adaptive security layer. Sentinel AI v2 is the intelligence engine in the 3-layer defensive stack: DQSN → Sentinel AI v2 → ADN.
+The next decade introduces threats such as rented hashrate farms, industrial-scale 51% attacks, AI-driven fraud, mempool automation, and quantum computing. DigiByte requires an adaptive security layer. Sentinel AI v2 is the intelligence engine in the 3-layer defensive stack: DQSN â Sentinel AI v2 â ADN.
 
 2. Role in the 3-Layer System
 DQSN provides entropy, timing, and chain anomaly telemetry.
@@ -21,7 +32,7 @@ ADN executes defensive responses: hardened mode, PQC activation, peer filtering,
 Sentinel v2 detects:
 Classical attacks: 51%, deep reorg, time-warp, double-spend, spam floods.
 Network manipulation: Sybil clustering, eclipse isolation, regional partitioning.
-Adversarial ML attacks: model poisoning, synthetic “normal” behaviour, masked anomalies, drift suppression.
+Adversarial ML attacks: model poisoning, synthetic ânormalâ behaviour, masked anomalies, drift suppression.
 Quantum attacks: Grover-based key search, Shor-based ECDSA factorization, draining weak keys.
 
 4. Design Philosophy
@@ -43,7 +54,7 @@ Circuit Breaker B: triggered by timestamp manipulation, synchronized multi-regio
 
 7. Scoring Pipeline
 Four stages: correlation, adversarial analysis, circuit breakers, final scoring.
-Status mapping: CRITICAL if any circuit breaker triggers; HIGH if score ≥ 0.8; ELEVATED if ≥ 0.4; NORMAL otherwise.
+Status mapping: CRITICAL if any circuit breaker triggers; HIGH if score â¥ 0.8; ELEVATED if â¥ 0.4; NORMAL otherwise.
 Output format: status, risk_score, and details.
 
 8. Public API
