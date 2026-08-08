@@ -126,6 +126,38 @@ Rules:
 
 All signatures in one bundle bind to the same `signed_payload_hash`. The verifier-required policy wins over embedded evidence.
 
+### Canonical Signature-Bundle Order
+
+DGB Sentinel AI producers must emit signature entries in this exact
+`policy.v1` order:
+
+```text
+classical-ed25519
+ml-dsa
+fn-dsa, when present
+```
+
+The bundle builder canonicalizes supported input entries into a new outer list
+without mutating or aliasing the caller's list. This outer-list guarantee does
+not add a deep-copy guarantee for the entry objects.
+
+A verifier must complete structural preflight for every entry, validate the
+exact algorithm sequence, and confirm both required algorithms are present
+before any trust-registry lookup or cryptographic verification. Structural
+preflight includes the exact entry schema, supported algorithm and
+`standard_profile`, duplicate rejection, signed-payload hash and domain
+binding, and key identifier and version syntax.
+
+A verifier must not repair, sort, or otherwise normalize a received bundle.
+Reversed, optional-first, interleaved, duplicate, unsupported, or
+missing-required algorithm sequences are malformed and fail closed before
+trust lookup or cryptographic verification.
+
+This ordering and preflight rule does not change strict required-signature AND
+semantics. The optional entry remains last and carries draft
+FN-DSA/Falcon-1024 evidence only. Present-invalid FN-DSA remains fatal and
+cannot replace or rescue either required algorithm.
+
 ## Real ML-DSA Backend Path
 
 DGB Sentinel AI V4.8F-C introduces an optional real backend adapter for the required `ml-dsa` path:
@@ -184,6 +216,7 @@ A verifier must reject:
 - missing required algorithm
 - duplicate algorithm entry
 - unknown algorithm
+- noncanonical signature algorithm order
 - wrong key id
 - revoked key
 - invalid key window
