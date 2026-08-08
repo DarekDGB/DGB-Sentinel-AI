@@ -1,8 +1,18 @@
-# 🚨 DigiByte Quantum Shield – Full Coordinated Attack Simulation Report
-### *(Red-Team Virtual Test – All Layers Attacked Simultaneously)*  
-**By @Darek_DGB**
+# DigiByte Quantum Shield - Historical Coordinated Attack Simulation Scenario
 
-This is a full virtual attack simulation against the entire 5-layer DigiByte Quantum Shield:
+Author attribution: DarekDGB
+
+Status: Historical and non-authoritative
+
+Evidence status: Synthetic scenario only. The events and logs below were not
+executed against a testnet, mainnet, CI environment, or production system and
+must not be cited as implementation or security proof.
+
+Current Sentinel AI behavior is defined by `docs/CONTRACT.md`,
+`docs/ARCHITECTURE.md`, and `docs/v4/CONTRACT.md`.
+
+This document preserves a v2-era conceptual attack simulation involving the
+five-layer DigiByte Quantum Shield design:
 
 - Sentinel AI v2  
 - DQSN (Quantum Shield Network)  
@@ -25,10 +35,10 @@ Below is the full structured report with all simulated logs.
 4. Force wallet withdrawals  
 5. Overload system resources
 
-**Final Result:**  
-The shield **detected**, **isolated**, and **blocked** everything.  
-Node stayed operational.  
-No funds were lost.
+**Synthetic scenario result:**  
+The fictional shield detected, isolated, and blocked every simulated attack.
+This outcome is narrative test input, not evidence that a deployed node or
+wallet executed these controls.
 
 ---
 
@@ -217,7 +227,7 @@ System stayed online & prioritized defense tasks.
 
 ---
 
-# ✅ FINAL OUTCOME
+# HISTORICAL SCENARIO OUTCOME
 
 **Attacker FAILED to:**
 - bypass Sentinel  
@@ -226,17 +236,16 @@ System stayed online & prioritized defense tasks.
 - force withdrawals  
 - crash the system  
 
-**Shield SUCCEEDED in:**
+**Within the synthetic scenario, Shield succeeded in:**
 - detection  
 - validation  
 - lockdown  
 - wallet protection  
 - survival under load  
 
-🛡 **This proves the power of the DigiByte 5-Layer Quantum Shield:**  
-**Detection → Validation → Defense → Wallet Protection → PQC Gate**
-
-This is the future of blockchain security.  
-This is what we are building.
-
-**— Darek (@Darek_Dgb)**
+This historical scenario does not prove that these controls were implemented,
+executed, or deployed. It grants no transaction-signing, broadcast, DigiByte
+consensus, wallet-custody, policy, approval, or execution authority. Current
+Sentinel AI produces component evidence only, the Shield Orchestrator produces
+the Shield receipt, and AdamantineOS remains the final fail-closed policy and
+execution boundary.
