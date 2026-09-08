@@ -1,5 +1,10 @@
 # Sentinel AI v3 — Auditor Summary
 
+Scope: retained v3 compatibility behavior. This historical summary is not a
+v4 release assessment. Review [the current v4 proof pack](v4/PROOF_PACK.md)
+and [candidate release status](v4/RELEASE_STATUS_v4.0.0.md) for the parallel
+component-evidence interface and outstanding release gates.
+
 **Project:** DGB-Sentinel-AI  
 **Component:** Sentinel AI (Shield Layer)  
 **Contract:** Shield Contract v3  
