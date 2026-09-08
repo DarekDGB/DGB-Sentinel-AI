@@ -1,140 +1,68 @@
-# Contributing to Sentinel AI (Shield Contract v3)
+# Contributing to DGB Sentinel AI
 
-> **Shield Contract v3 Notice**
->
-> Sentinel AI is now a **Shield Contract v3 signal-generation component**.
-> Contributions must not weaken:
-> - contract strictness
-> - determinism
-> - fail-closed behavior
-> - Sentinel’s read-only, non-consensus role
->
-> Authoritative specifications live in **`docs/INDEX.md`**.
+Author attribution: DarekDGB
 
----
+## Scope
 
-## 🚀 Project Scope (v3)
+The current distribution is the Shield v4.0.0 candidate. It contains parallel
+v4 component-evidence primitives and the retained v3 compatibility adapter.
+Use [the documentation index](docs/INDEX.md) to select the contract for the
+interface being changed.
 
-**Sentinel AI** is the *external, non-consensus* threat detection and signal-generation
-layer of the **DigiByte Quantum Shield**.
+Sentinel observes defensive context and produces evidence. It cannot sign or
+broadcast DigiByte transactions, hold wallet keys, change DigiByte consensus,
+act as final policy or execution authority, or bypass the Shield Orchestrator.
+Signing domain-separated component evidence through an explicit backend is
+within the v4 contract. It does not grant transaction-signing authority.
 
-Its responsibilities are strictly limited to:
+The Shield Orchestrator produces the Shield receipt; AdamantineOS remains
+the final fail-closed policy and execution boundary.
 
-- observing network telemetry
-- detecting anomalous or hostile patterns
-- producing **structured Shield Contract v3 signals**
-- remaining fully **read-only**
+## Required invariants
 
-Sentinel AI **must never**:
-- sign transactions
-- modify blockchain state
-- influence consensus rules
-- act as an enforcement or policy engine
+- Preserve deterministic decisions, canonical hashes, and explicit inputs.
+- Reject invalid or ambiguous input through explicit fail-closed paths.
+- Keep required classical and ML-DSA verification under strict AND policy.
+- Optional draft FN-DSA evidence cannot replace or rescue a required path.
+- Keep optional evidence last; reject noncanonical received bundle order.
+- Keep TEST-ONLY material separate from real backends, with no silent fallback.
+- Preserve component roles, domain binding, and wallet-key separation.
+- Preserve the v3 compatibility contract and frozen manifest identity.
+- Preserve legitimate third-party notices and DarekDGB first-party attribution.
 
-Legacy v2 concepts are preserved in `docs/legacy/` for historical reference only.
+Signature bytes from native cryptography need not be deterministic. Do not
+confuse canonical payload determinism with randomized signature generation.
 
----
+## Welcome changes
 
-## ✅ What Contributions Are Welcome
+Detection and analysis improvements, clearer specifications, fail-closed
+hardening, and useful negative tests are welcome within the declared scope.
+Reject opaque behavior, permissive parsing, hidden execution authority,
+consensus changes, or production claims unsupported by evidence.
+Legacy v2 concepts remain historical references.
 
-### ✔️ Detection & Analysis Improvements
-- Improved anomaly detection logic
-- Better feature engineering (entropy, topology, propagation, forks)
-- Refinements to risk scoring models
-- Performance and reliability improvements
+## Review and verification
 
-### ✔️ Contract & Security Hardening
-- Strengthening Shield Contract v3 validation
-- Improving fail-closed handling
-- Tightening determinism and replay safety
-- Additional regression or invariance tests
+Explain the concrete problem, the resulting behavior, and the validation.
+Contract or security changes require tests; keep the 100 percent coverage
+gate. Run the full suite after editable installation and compilation, with
+normal checkout metadata, bytecode, and test caches enabled.
 
-### ✔️ Testing & Verification
-- Attack simulations
-- Property-based or fuzz testing
-- CI hardening
-- No-drift regression coverage
+```text
+python -m pip install -e ".[dev]"
+python -m compileall -q src
+pytest --cov=sentinel_ai_v2 --cov-report=term-missing --cov-fail-under=100 -q
+```
 
-### ✔️ Documentation
-- Clarifying v3 behavior or invariants
-- Improving explanations in authoritative docs
-- Correcting ambiguity or drift
+The standard matrix is Python 3.10/3.11/3.12. The dedicated real-OQS workflow
+must report both required native nodes with no skips for native proof.
+Do not infer a live-crypto pass from ordinary environment-gated skips.
 
----
+## Release and license
 
-## ❌ What Will Not Be Accepted
+The v4.0.0 distribution remains a controlled pre-release; no tag is authorized
+by documentation or local tests. Follow the living roadmap, exact-commit CI,
+external audit, and fresh-ZIP verification gates.
 
-### 🚫 Weakening Shield Contract v3
-- Making validation permissive
-- Allowing partial or best-effort parsing
-- Softening fail-closed behavior
-- Introducing silent fallbacks
-
-### 🚫 Decision or Enforcement Logic
-Sentinel AI must not:
-- override upstream or downstream decisions
-- act as a policy engine
-- downgrade or reinterpret signals after evaluation
-
-### 🚫 Consensus Interaction
-Sentinel AI must never:
-- modify DigiByte consensus rules
-- influence block acceptance or difficulty
-- interact with private keys or signing flows
-
-### 🚫 Opaque or Unreviewable Complexity
-Avoid introducing:
-- opaque ML pipelines without explainability
-- heavy frameworks that reduce auditability
-- logic that obscures determinism or reproducibility
-
----
-
-## 🧱 Design Principles (Non-Negotiable)
-
-All contributions must respect:
-
-1. **Read-Only by Design**  
-   Sentinel observes and signals — nothing more.
-
-2. **Fail-Closed First**  
-   Invalid input must result in `ERROR`, never silent acceptance.
-
-3. **Determinism**  
-   Same input → same output → same `context_hash`.
-
-4. **Auditability**  
-   Security reviewers must be able to reason about behavior from code alone.
-
-5. **Separation of Authority**  
-   Sentinel signals; DQSN transports; ADN decides.
-
-6. **History Preservation**  
-   Legacy concepts may be referenced, not re-introduced.
-
----
-
-## 🔄 Pull Request Expectations
-
-A pull request should include:
-
-- A clear explanation of **what changed and why**
-- Tests for any contract, detection, or logic changes
-- No weakening of v3 invariants
-- Documentation updates where applicable
-
-Additional rules:
-- Contract changes **require tests**
-- Determinism changes require **regression coverage**
-- Fail-closed behavior must be preserved or strengthened
-
-The architect (**@DarekDGB**) reviews **direction and invariants**.  
-Contributors and DigiByte developers review **technical correctness**.
-
----
-
-## 📝 License
-
-By contributing, you agree that your work is released under the **MIT License**.
-
-© 2026 **DarekDGB**
+The architect, DarekDGB, reviews direction and invariants. Contributions are
+released under the MIT License.
