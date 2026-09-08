@@ -7,7 +7,21 @@ Breaking changes are only introduced with a **major version bump**.
 
 ---
 
-## v3.2.0 — Manifest / Verdict / Receipt Lock
+## v4.0.0 - Controlled pre-release candidate
+
+- Align distribution, import, CLI, and server display versions to 4.0.0.
+- Publish the v4 component proof pack and candidate release-status record.
+- Align active documentation with required classical plus ML-DSA policy,
+  optional-last draft Falcon-1024 evidence, and Orchestrator-first authority.
+- Preserve v3 contract version 3 and its frozen 3.2.0 manifest identity;
+  existing CLI and HTTP interfaces remain compatibility adapters.
+- Preserve all v4 protocol, schema, trust-profile, crypto, workflow, and KAT bytes.
+- Add release-pack locks and preserve repository hygiene with generated
+  coverage shards excluded from the archive fallback scan.
+- This entry does not authorize a release tag. Exact-commit workflows and
+  fresh post-commit ZIP verification remain required.
+
+## v3.2.0 â Historical Manifest / Verdict / Receipt Lock
 
 - Added Shield v3.2.0 manifest documentation under `docs/v3/`.
 - Added reason ID and evidence family registries.
@@ -16,9 +30,9 @@ Breaking changes are only introduced with a **major version bump**.
 - Locked AdamantineOS boundary language: Shield is consumed only through the deterministic Orchestrator receipt.
 
 
-## [v3.1.0] — 2026-06-02
+## [v3.1.0] â 2026-06-02
 
-### 🛡️ Shield Hardening Release
+### ð¡ï¸ Shield Hardening Release
 
 This release hardens Sentinel AI for the Shield v3.1.0 upgrade track while preserving the existing Shield Contract v3 surface.
 
@@ -47,9 +61,9 @@ This release hardens Sentinel AI for the Shield v3.1.0 upgrade track while prese
 
 ---
 
-## [v3.0.0] — 2026-01-07
+## [v3.0.0] â 2026-01-07
 
-### 🚀 Major Release — Shield Contract v3
+### ð Major Release â Shield Contract v3
 
 This release marks the **formal stabilization of Sentinel AI v3** as a
 deterministic, fail-closed, non-authoritative security component within the
@@ -64,7 +78,7 @@ DigiByte Quantum Immune Shield.
 - Shared v3 test fixtures for deterministic test construction
 - Auditor Summary (`AUDITOR_SUMMARY.md`)
 - Hardened Security Policy with explicit scope and non-goals
-- CI enforcement with ≥90% test coverage gate
+- CI enforcement with â¥90% test coverage gate
 - Unicode hashing behavior explicitly tested and documented
 
 #### Changed
@@ -86,7 +100,7 @@ DigiByte Quantum Immune Shield.
 
 ---
 
-## [v2.x] — Legacy Series (Maintenance Only)
+## [v2.x] â Legacy Series (Maintenance Only)
 
 ### Notes
 - v2 APIs remain available via internal adapter
@@ -98,9 +112,9 @@ DigiByte Quantum Immune Shield.
 
 ## Versioning Policy
 
-- **MAJOR** — Contract or semantic breaking change
-- **MINOR** — Backward-compatible feature additions
-- **PATCH** — Bug fixes, tests, documentation, CI improvements
+- **MAJOR** â Contract or semantic breaking change
+- **MINOR** â Backward-compatible feature additions
+- **PATCH** â Bug fixes, tests, documentation, CI improvements
 
 Any change that weakens determinism, fail-closed behavior, or non-authoritative
 design will require a major version bump and explicit documentation.
