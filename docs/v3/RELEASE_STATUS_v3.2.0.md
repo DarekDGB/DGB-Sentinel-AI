@@ -1,72 +1,36 @@
-# Sentinel AI — Shield v3.2.0 Release Status
+# Sentinel AI - Historical Shield v3.2.0 Release Status
 
 Author attribution: DarekDGB
+Status: Historical compatibility record
 
-## Status
+## Retained scope
 
-Shield v3.2.0 is the manifest / verdict / receipt lock release.
+The v3.2.0 series established manifest, reason-ID, evidence-family, and
+canonical-verdict locks. The frozen v3 manifest retains package_version
+3.2.0 and contract_version 3 inside the current distribution.
 
-This repository is ready for the `v3.2.0` Shield-side tag only after:
+This record is not a pending instruction to create or move a v3.2.0 tag.
+Current candidate status and gates are recorded in
+[the v4.0.0 release status](../v4/RELEASE_STATUS_v4.0.0.md).
 
-- GitHub Actions are green
-- coverage gate remains satisfied
-- v3.2.0 manifest docs are present
-- reason ID registry is present
-- evidence-family registry is present
-- test matrix is present
-- proof pack is present
-- docs match tests
-- final fresh ZIP audit is complete
-- authorized Red Team / bypass review is complete
-- no unresolved critical or high findings remain
+## Historical verification requirements
 
-## Release Scope
+The v3 checklist required green CI, its coverage gate, complete registries,
+negative verdict tests, documentation agreement, a fresh-ZIP review, and
+authorized bypass review. Those requirements and any historical review
+results do not establish v4 release readiness or a new security audit.
 
-This release locks the Shield v3.2.0 integration boundary for this component.
+## Authority boundary
 
-It includes:
+The retained v3 output is evidence only. It cannot sign or broadcast
+transactions, hold wallet keys, change DigiByte consensus, override the Shield
+Orchestrator, or approve AdamantineOS execution directly.
 
-- deterministic manifest discipline
-- stable reason ID registry
-- stable evidence-family registry
-- canonical component verdict lock
-- fail-closed validation expectations
-- Orchestrator-first AdamantineOS handoff language
+AdamantineOS consumes Shield through the deterministic Orchestrator receipt.
+A Shield ALLOW is not final signing or execution approval.
 
-## Authority Boundary
+## Independent release lines
 
-This component does not sign, broadcast, hold keys, modify DigiByte consensus, expand authority, override the Shield Orchestrator, or approve AdamantineOS execution directly.
-
-Component output is evidence only.
-
-AdamantineOS must consume Shield only through the deterministic Shield Orchestrator receipt.
-
-Shield `ALLOW` is not final AdamantineOS signing or execution authority.
-
-## Red Team / Bypass Review
-
-Final review scope included:
-
-- component bypass
-- unknown registry values
-- duplicate / missing evidence
-- context-hash mismatch
-- receipt tampering where applicable
-- AI authority bypass
-- governance approval reuse at current scope
-- replay / freshness boundary at current Shield scope
-- docs-vs-tests alignment
-
-Result: no unresolved critical or high findings remain for Shield v3.2.0 tagging.
-
-## AdamantineOS Tag Boundary
-
-AdamantineOS is not tagged as part of Shield v3.2.0.
-
-AdamantineOS remains on its own release line:
-
-```text
-v2.2.0 — WSQK v2 Quantum-Aware Upgrade
-```
-
-AdamantineOS must not be tagged until Shield v3 is fully integrated into AdamantineOS and the Adamantine release checklist passes.
+AdamantineOS has its own release line and authorization gates. Historical
+references to its v2.2.0 WSQK v2 upgrade do not prescribe its current version
+or authorize any tag. Use the current living roadmap for release decisions.
