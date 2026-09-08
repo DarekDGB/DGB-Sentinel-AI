@@ -1,65 +1,56 @@
 # Sentinel AI Documentation Index
 
-This index lists **authoritative, supporting, and legacy documentation**
-for **DGB Sentinel AI (Shield Contract v3)**.
+Author attribution: DarekDGB
 
----
+## Current Shield v4.0.0 candidate
 
-## 🚀 Start Here (Authoritative — v3)
+These documents describe the parallel v4 component-evidence interface:
 
-These documents define **binding behavior** of Sentinel AI v3.
-Audits, integrations, and reviews must rely on these.
+- [Contract](v4/CONTRACT.md)
+- [Manifest and trust profile](v4/MANIFEST.md)
+- [Real crypto backend](v4/REAL_CRYPTO_BACKEND.md)
+- [Test matrix](v4/TEST_MATRIX.md)
+- [Proof pack](v4/PROOF_PACK.md)
+- [Release status](v4/RELEASE_STATUS_v4.0.0.md)
+- [README](../README.md)
+- [Changelog](../CHANGELOG.md)
+- [Security policy](../SECURITY.md)
 
-- **Shield Contract (binding):** `CONTRACT.md`
-- **Architecture (role + flow):** `ARCHITECTURE.md`
-- **Upgrade Plan:** `upgrade/SENTINEL_AI_V3_UPGRADE_PLAN.md`
-- **Changelog:** `../CHANGELOG.md`
-- **Security Policy:** `../SECURITY.md`
-- **Auditor Summary:** `../AUDITOR_SUMMARY.md`
+The distribution is a controlled pre-release; not released and not tagged.
 
----
+## Retained v3 compatibility
 
-## 🧩 Integration & Usage
+The existing CLI, HTTP service, and compatibility adapter retain v3 behavior.
+Their displayed distribution version is 4.0.0; their contract is not rewritten.
 
-These documents help integrators and partners use Sentinel AI correctly.
+- [v3 request contract](CONTRACT.md)
+- [v3 architecture](ARCHITECTURE.md)
+- [v3 auditor summary](AUDITOR_SUMMARY.md)
+- [v3 manifest](v3/MANIFEST.md)
+- [v3 reason IDs](v3/REASON_IDS.md)
+- [v3 evidence families](v3/EVIDENCE_FAMILIES.md)
+- [v3 proof mapping](v3/PROOF_PACK.md)
+- [v3 release history](v3/RELEASE_STATUS_v3.2.0.md)
+- [Historical upgrade plan](upgrade/SENTINEL_AI_V3_UPGRADE_PLAN.md)
+- [Integration guide](INTEGRATION.md)
+- [Troubleshooting](TROUBLESHOOTING.md)
+- [Migration from v2](MIGRATION_V2_TO_V3.md)
 
-- **README (public entry point):** `../README.md`
-- **Integration Guide:** `../INTEGRATION.md`
-- **Troubleshooting:** `../TROUBLESHOOTING.md`
-- **Migration v2 → v3:** `../MIGRATION_V2_TO_V3.md`
+## Verification
 
----
+- [Standard workflow](../.github/workflows/tests.yml): Python 3.10/3.11/3.12,
+  complete suite and 100 percent coverage.
+- [Native proof workflow](../.github/workflows/shield-v4-real-oqs.yml):
+  exactly two required native-OQS nodes and no skips.
+- [Repository tests](../tests/): contracts, negative paths, compatibility,
+  encoding, attribution, and release-document locks.
 
-## 🧪 Testing & Guarantees
+## Historical, non-authoritative material
 
-These describe how guarantees are enforced.
+[Legacy technical notes](legacy/technical-spec.md),
+[legacy whitepaper](legacy/whitepaper-sentinel-ai-v2.md), and
+[synthetic attack scenario](legacy/ATTACK-SIMULATION-REPORT.md) do not prove
+production protection or define current integration behavior.
 
-- CI workflow: `.github/workflows/tests.yml`
-- Coverage gate: 100% enforced in CI
-- Determinism & toxic telemetry regression tests (see `tests/`)
-
----
-
-## 🕰️ Legacy References (Non‑Authoritative)
-
-The following documents are preserved **for historical context only**.
-They do **not** define current behavior.
-
-- `legacy/technical-spec.md`
-- `legacy/whitepaper-sentinel-ai-v2.md`
-
-Legacy documents must **not** be used for:
-- integration decisions
-- security assumptions
-- audits of v3 behavior
-
----
-
-## ✅ Status
-
-- Shield Contract v3 enforced
-- CI green
-- Coverage gate active
-- Legacy paths regression‑locked
-
-This index reflects the **current, supported surface** of Sentinel AI.
+Sentinel produces evidence. The Shield Orchestrator produces the Shield
+receipt; AdamantineOS remains the final fail-closed policy and execution boundary.
