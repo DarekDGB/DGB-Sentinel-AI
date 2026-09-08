@@ -1,25 +1,29 @@
 # Security Policy — DGB Sentinel AI
 
 **Repository:** DGB-Sentinel-AI  
-**Component:** Sentinel AI v3 — Threat Signal Layer  
+**Component:** Sentinel AI - Shield v4 threat-signal evidence and v3 compatibility
 **Maintainer:** DarekDGB  
 **License:** MIT
 
-This document defines the security policy and disclosure process for DGB Sentinel AI, with a focus on the **Shield v3.2.0 manifest / verdict boundary**.
+This document defines the security policy and disclosure process for the
+Shield v4.0.0 candidate and its retained v3 compatibility interfaces.
+The candidate is a controlled pre-release; not released and not tagged.
 
 ---
 
 ## Supported Versions
 
-Only the current Shield v3 Sentinel surface is supported and security-maintained for new Shield work.
+Select the contract matching the interface under review. The distribution
+version does not replace protocol versions or grant release authorization.
 
 | Component | Status |
 |---|---|
-| Sentinel AI v3.2.0 | ✅ Supported — current integration-boundary hardening surface |
-| Earlier v3.x | ✅ Supported only as historical baseline where applicable |
+| Sentinel AI v4.0.0 candidate | Controlled pre-release component-evidence surface |
+| Retained v3 adapter and 3.2.0 manifest | Compatibility surface with frozen identities |
 | Older archived behavior | ❌ Unsupported |
 
-Legacy documentation may remain in the repository for historical reference, but it is **non-authoritative** for v3.2.0 security behavior.
+Legacy scenarios are historical and non-authoritative. Current v4 claims are
+bounded by `docs/v4/PROOF_PACK.md` and `docs/v4/RELEASE_STATUS_v4.0.0.md`.
 
 ---
 
@@ -45,7 +49,7 @@ It does not:
 - alter DigiByte consensus rules
 - sign transactions
 - broadcast transactions
-- hold, derive, or access private keys
+- hold, derive, or access wallet private keys
 - approve AdamantineOS execution directly
 - override the Shield Orchestrator
 
@@ -71,7 +75,8 @@ Expected fail-closed behavior includes:
 
 The same valid input must always produce the same output.
 
-Contract behavior must not depend on:
+Deterministic decisions and canonical payload hashes must not depend on
+undeclared ambient state such as:
 
 - timestamps
 - randomness
@@ -81,7 +86,9 @@ Contract behavior must not depend on:
 - dictionary iteration order
 - runtime-dependent side effects
 
-Canonical hashes must be reproducible.
+Canonical hashes must be reproducible for the same explicit inputs. Native
+signature bytes need not be deterministic. Time windows and supplied context
+are explicit verification inputs, not hidden sources of execution authority.
 
 ### 3. Evidence-Only Authority
 
@@ -94,7 +101,7 @@ Sentinel may:
 
 Sentinel must never:
 
-- execute cryptographic signing
+- sign transactions or use wallet keys
 - modify consensus behavior
 - perform final approval
 - approve AdamantineOS execution directly
@@ -109,13 +116,16 @@ A fallback that changes authority, weakens validation, or allows execution is a 
 
 ---
 
-## v3.2.0 Security Boundary
+## Retained v3 and Current v4 Security Boundaries
 
-The v3.2.0 boundary locks Sentinel AI into the Shield manifest / verdict / receipt upgrade path.
+The retained v3.2.0 manifest boundary and the parallel v4 component-verdict
+boundary both preserve the Orchestrator-first receipt path.
 
 Sentinel component verdicts are **evidence only**.
 
-Sentinel must not be treated as final execution authority.
+Sentinel must not be treated as final execution authority. The parallel v4
+interface may sign domain-separated component evidence through an explicit
+backend, which does not add transaction-signing or wallet-custody authority.
 
 AdamantineOS must consume Shield decisions only through the deterministic **Shield Orchestrator receipt**.
 
@@ -169,7 +179,8 @@ Documentation must never claim behavior that tests do not enforce.
 
 ## Release Requirements
 
-No Sentinel AI v3.2.0 release should be tagged unless all of the following are true:
+No v4.0.0 candidate release is authorized by this document. Before an explicit
+release decision, require all of the following:
 
 - roadmap checklist is complete
 - tests pass locally or in CI
@@ -177,11 +188,21 @@ No Sentinel AI v3.2.0 release should be tagged unless all of the following are t
 - manifest files are present and aligned
 - reason IDs are documented and tested
 - evidence families are documented and tested
-- verdict boundary tests pass
+- v3 compatibility and v4 verdict boundary tests pass
+- required classical and ML-DSA paths retain strict AND policy
+- optional draft FN-DSA cannot replace or rescue either required path
+- dedicated native-OQS proof executes both required nodes with no skips
 - Orchestrator receipt boundary is respected
 - final fresh ZIP audit is complete
 - Red Team report is complete
 - no docs-vs-tests mismatch remains
+
+Draft Falcon-1024 evidence is not final FIPS 206 proof. The repository does
+not supply a production classical Ed25519 backend. Backend-contract tests,
+native PQC round trips, and 100 percent statement coverage do not establish
+production key custody, HSM assurance, universal attack detection, or a full
+production deployment. Runtime/backend reproducibility remains a later
+roadmap gate; E4 does not pin the existing floating workflows.
 
 ---
 
