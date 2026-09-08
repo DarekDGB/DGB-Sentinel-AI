@@ -2,6 +2,14 @@
 
 Author attribution: DarekDGB
 
+Distribution version: 4.0.0
+Status: controlled pre-release; not released and not tagged
+Candidate tag: v4.0.0
+
+Distribution metadata is distinct from protocol identity. The retained v3
+manifest remains `PACKAGE_VERSION = "3.2.0"`; every v4 constant below is frozen.
+See [the proof pack](PROOF_PACK.md) and [release status](RELEASE_STATUS_v4.0.0.md).
+
 ## Component
 
 ```text
@@ -172,3 +180,13 @@ V4.8H-E adds:
 - a dedicated PQC workflow that runs both live ML-DSA and live Falcon-1024 proofs with the not-skipped JUnit guard.
 
 The H-E lock keeps FN-DSA optional. It does not upgrade FN-DSA to required policy, does not claim final FIPS 206 support, and does not let Falcon/FN-DSA override required `classical-ed25519` or `ml-dsa` failures.
+
+## Frozen fixture file hashes
+
+These are SHA-256 hashes of complete fixture files, distinct from the signed
+payload hash recorded above. E4 preserves the fixture bytes exactly.
+
+```text
+176d9d8f7d16be456f2bf783c3031b65c46fd5f9efed1aba89d216b98406b0ff  tests/fixtures/v4/component_verdict_policy_v1_kat.json
+b799b963cb46ccf579a0380cffeecd81f99fa616267e6d69fec4f2bf06e9f6ef  tests/fixtures/v4/fn_dsa_signed_message_draft_profile_kat.json
+```
