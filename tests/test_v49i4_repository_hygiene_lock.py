@@ -18,7 +18,7 @@ from sentinel_ai_v2.contracts.v3_2_lock import (
 )
 
 ALLOWED_ATTRIBUTION = "DarekDGB"
-CURRENT_VERSION = "3.2.0"
+CURRENT_VERSION = "4.0.0"
 LEGACY_DOCUMENTS = (
     "docs/legacy/ATTACK-SIMULATION-REPORT.md",
     "docs/legacy/whitepaper-sentinel-ai-v2.md",
@@ -117,6 +117,7 @@ def _is_generated(path: Path, root: Path) -> bool:
     return (
         _is_runtime_liboqs_checkout_path(path, root)
         or path.name in _GENERATED_FILE_NAMES
+        or path.name.startswith(".coverage.")
         or path.suffix in {".pyc", ".pyo"}
         or any(part in _GENERATED_DIRECTORY_NAMES for part in relative.parts)
         or any(part.endswith((".egg-info", ".dist-info")) for part in relative.parts)
@@ -362,14 +363,14 @@ def test_repository_author_attribution_is_darekdgb_only() -> None:
     assert failures == [], "author attribution lock failures:\n" + "\n".join(failures)
 
 
-def test_active_version_identity_is_exactly_v3_2_0(capsys) -> None:
+def test_active_v4_version_preserves_frozen_v3_manifest_identity(capsys) -> None:
     manifest = build_manifest()
 
     assert __version__ == CURRENT_VERSION
     assert server.app.version == CURRENT_VERSION
     assert _project_version() == CURRENT_VERSION
-    assert PACKAGE_VERSION == CURRENT_VERSION
-    assert manifest["package_version"] == CURRENT_VERSION
+    assert PACKAGE_VERSION == "3.2.0"
+    assert manifest["package_version"] == "3.2.0"
     assert CONTRACT_VERSION == manifest["contract_version"] == 3
     assert COMPONENT_ID == manifest["component_id"] == "sentinel_ai"
 
@@ -519,6 +520,8 @@ def test_repository_inventory_prefers_tracked_files_and_has_safe_zip_fallback(
     cache = root / "src" / "__pycache__" / "cache.pyc"
     cache.parent.mkdir()
     cache.write_bytes(b"cache")
+    coverage_shard = root / ".coverage.worker.1"
+    coverage_shard.write_bytes(b"transient coverage database")
     checkout = root / "liboqs"
     (checkout / ".git").mkdir(parents=True)
     upstream = checkout / "upstream.bin"
