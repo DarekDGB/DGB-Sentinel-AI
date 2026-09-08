@@ -4,9 +4,17 @@ Author attribution: DarekDGB
 
 ## Status
 
+Distribution version: `4.0.0`. Status: controlled pre-release; not released
+and not tagged. The contract identities below are unchanged by E4.
+See [the proof pack](PROOF_PACK.md) and
+[candidate release status](RELEASE_STATUS_v4.0.0.md).
+
 This document defines the DGB Sentinel AI Shield v4 component-verdict contract.
 
-This is a parallel v4 contract. It does not modify or replace the audited v3.2 DGB Sentinel AI deterministic contract.
+This is a parallel v4 contract. It does not modify or replace the retained
+v3 DGB Sentinel AI contract or its frozen `PACKAGE_VERSION = "3.2.0"` manifest.
+The existing CLI and HTTP adapters remain v3 compatibility interfaces even
+though their displayed distribution version is `4.0.0`.
 
 V4.8F-C adds a real ML-DSA backend adapter path for DGB Sentinel AI component evidence. The deterministic TEST-ONLY path remains separate and is retained only for contract and CI locking. V4.8H-C adds the component FN-DSA optional-evidence contract with authenticated `standard_profile` binding.
 
