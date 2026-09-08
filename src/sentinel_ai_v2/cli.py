@@ -11,7 +11,7 @@ from .wrapper.sentinel_wrapper import SentinelWrapper
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="sentinel-ai",
-        description="Sentinel AI v2 – Quantum-Resistant Threat Engine for DigiByte",
+        description="Sentinel AI telemetry CLI (v3 compatibility adapter)",
     )
 
     subparsers = parser.add_subparsers(
@@ -41,7 +41,7 @@ def _build_parser() -> argparse.ArgumentParser:
     # sentinel-ai version
     subparsers.add_parser(
         "version",
-        help="Print Sentinel AI v2 version information.",
+        help="Print Sentinel AI distribution version information.",
     )
 
     return parser
@@ -92,8 +92,8 @@ def _cmd_snapshot(args: argparse.Namespace) -> int:
 def _cmd_version() -> int:
     # Keep the version info here so developers can easily update it.
     version_info = {
-        "sentinel_ai_v2": "3.2.0",
-        "description": "Quantum-Resistant Threat Engine for DigiByte",
+        "sentinel_ai_v2": "4.0.0",
+        "description": "DigiByte telemetry analysis through the retained v3 compatibility adapter.",
     }
     json.dump(version_info, sys.stdout, indent=2)
     sys.stdout.write("\n")
