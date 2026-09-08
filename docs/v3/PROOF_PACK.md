@@ -2,6 +2,9 @@
 
 Author attribution: DarekDGB
 
+Status: Historical v3 compatibility proof mapping. The current candidate
+proof pack is [the v4 proof pack](../v4/PROOF_PACK.md).
+
 ## Proof Mapping
 
 - Invariant: deny-by-default / fail-closed → `tests/test_v3_2_manifest_verdict_lock.py` negative-path parametrized test.
@@ -12,4 +15,5 @@ Author attribution: DarekDGB
 - Evidence family registry → unknown, duplicate, and empty evidence family negative cases.
 - AdamantineOS boundary → manifest states Orchestrator receipt is the only visibility path.
 
-No v3.2.0 tag is allowed until the final fresh ZIP audit and Red Team report are complete.
+The original v3 release required fresh-ZIP and authorized review gates. This
+historical mapping does not instruct creation of a v3.2.0 tag or authorize v4.
