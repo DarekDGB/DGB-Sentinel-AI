@@ -1,5 +1,12 @@
 # Sentinel AI — Shield Contract v3
 
+Author attribution: DarekDGB
+
+Scope: retained v3 request/response compatibility contract. The current
+distribution is the v4.0.0 candidate; its parallel signed component-evidence
+interface is specified in [the v4 contract](v4/CONTRACT.md). Existing CLI and
+HTTP adapters continue to use the v3 surface described below.
+
 This document defines the **authoritative contract** for interacting with  
 **Sentinel AI v3**. Any integration that does not follow this contract is  
 considered **unsupported and unsafe**.
@@ -8,7 +15,7 @@ considered **unsupported and unsafe**.
 
 ## 1. Supported Contract Version
 
-Sentinel AI supports **Shield Contract v3 only**.
+This compatibility adapter accepts **Shield Contract v3 only**.
 
 - Requests with any other version are rejected
 - Version validation occurs **before** schema parsing
