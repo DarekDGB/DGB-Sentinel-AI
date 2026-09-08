@@ -4,7 +4,9 @@ Author attribution: DarekDGB
 
 ## Scope
 
-This matrix covers the DGB Sentinel AI Shield v4 component-verdict contract and the V4.8F-C real ML-DSA backend path.
+This matrix covers the DGB Sentinel AI Shield v4 component-verdict contract,
+the real ML-DSA-65 and optional draft Falcon-1024 backend paths, and the
+v4.0.0 controlled pre-release package. The distribution is not released or tagged.
 
 The goal is to prove DGB Sentinel AI can produce and verify v4 component evidence while keeping TEST-ONLY deterministic signatures separate from real backend mode.
 
@@ -86,12 +88,20 @@ The goal is to prove DGB Sentinel AI can produce and verify v4 component evidenc
 
 ## Required CI Gate
 
+The unchanged `Sentinel AI Tests (v3)` workflow runs the complete suite on
+Python 3.10, 3.11, and 3.12. Its historical name does not limit it to v3 tests.
+Editable installation and compilation precede the test command; ordinary
+checkout metadata, bytecode, pytest caches, and coverage output are supported.
+
 ```text
 pytest --cov=sentinel_ai_v2 --cov-report=term-missing --cov-fail-under=100 -q
 ```
 
 
 ## Optional Real-OQS Proof Gate
+
+The backend dependency is optional in ordinary CI. This dedicated two-node
+proof is mandatory for E4 closure and for a release claim of native execution.
 
 Default CI does not require liboqs. The live liboqs proof is a separate gated
 job that executes both required guarded nodes:
@@ -176,6 +186,19 @@ A live Falcon-1024 claim requires the dedicated PQC workflow JUnit guard to repo
 
 ## Authority Boundary
 
-Passing these tests proves only the DGB Sentinel AI v4 component-verdict contract and DGB Sentinel AI real ML-DSA adapter boundary.
+Passing these tests provides evidence for the bounded v4 component-verdict
+contract and the ML-DSA/Falcon-1024 adapter paths exercised by those tests.
 
 It does not grant transaction-signing authority, broadcast authority, DigiByte consensus authority, Shield Orchestrator final receipt authority, or AdamantineOS final authority.
+
+## E4 release-pack regression lock
+
+`tests/test_v410e4_release_pack_lock.py` locks active version surfaces, retained
+v3 identities, frozen v4 profiles and KAT hashes, document links, candidate-only
+status, compatibility-interface wording, and the existing exact native nodes.
+It uses the established repository hygiene detectors, including C1 rejection,
+and explicitly exercises generated-output handling and source attribution.
+
+Preparation result: 247 passed, 2 expected environment-gated native-OQS skips,
+1513/1513 statements, 100 percent coverage. The E4 lock has 10 tests.
+See [the proof pack](PROOF_PACK.md) for the preparation environment and limits.
