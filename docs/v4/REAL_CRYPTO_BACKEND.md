@@ -4,6 +4,10 @@ Author attribution: DarekDGB
 
 ## Status
 
+Distribution version: `4.0.0`, controlled pre-release; not released and not
+tagged. Current adapters cover ML-DSA-65 and optional draft Falcon-1024.
+E4 changes release documentation only at this boundary; backend code is unchanged.
+
 This document locks the DGB Sentinel AI Shield v4 real-crypto backend boundary for component verdict evidence.
 
 V4.8F-C introduces a deployment-controlled real ML-DSA adapter path for DGB Sentinel AI. It does not replace the deterministic TEST-ONLY signature path used by contract tests. V4.8H-C adds authenticated `standard_profile` binding and optional FN-DSA draft-profile evidence semantics. It does not make DGB Sentinel AI a transaction signer, broadcaster, consensus layer, wallet custody layer, or AdamantineOS final authority.
@@ -126,7 +130,10 @@ python -m pytest --override-ini addopts='' \
   tests/test_v48g_real_oqs_mldsa_backend.py \
   tests/test_v48h_e_real_oqs_falcon_backend.py \
   -q --junitxml=shield-v4-real-oqs-results.xml
-python scripts/assert_real_oqs_junit_not_skipped.py shield-v4-real-oqs-results.xml
+python scripts/assert_real_oqs_junit_not_skipped.py shield-v4-real-oqs-results.xml \
+  --min-tests 2 \
+  --require-testcase "tests/test_v48g_real_oqs_mldsa_backend.py::test_v48g_real_oqs_mldsa65_sentinel_backend_round_trip_and_negatives" \
+  --require-testcase "tests/test_v48h_e_real_oqs_falcon_backend.py::test_v48h_e_real_oqs_falcon1024_backend_round_trip_and_negatives"
 ```
 
 A public live Falcon-1024 claim requires that dedicated workflow to finish green with `skipped == 0`, `failures == 0`, and `errors == 0` for the guarded report.
@@ -183,7 +190,8 @@ Missing OQS and disabled OQS mechanisms surface through `SentinelAiV4RealCryptoB
 
 ## Policy status
 
-This step adds the real ML-DSA path for DGB Sentinel AI. Shield v4 `policy.v1` still requires both:
+The current backend set includes real ML-DSA and optional Falcon-1024 evidence.
+Shield v4 `policy.v1` still requires both:
 
 ```text
 classical-ed25519
@@ -193,20 +201,24 @@ ml-dsa
 A production real-backend deployment must satisfy both required paths. If optional FN-DSA is present, unsupported `standard_profile` values, wrong hashes, wrong domains, duplicate entries, wrong roles, or missing trust-profile keys fail closed. This DGB Sentinel AI OQS adapter alone does not downgrade policy.v1 and does not allow ML-DSA to replace the required classical path.
 
 
-## V4.8G gated real-liboqs proof
+## Historical V4.8G proof and current two-node gate
 
 Default package CI proves the backend interface contract and fail-closed behavior using deterministic fake backends. It does not claim that live liboqs ML-DSA ran.
 
-A separate optional GitHub Actions workflow exercises real liboqs only when the dedicated job installs liboqs, sets `SHIELD_V4_REAL_OQS=1`, and runs:
-
-```text
-python -m pytest --override-ini addopts='' tests/test_v48g_real_oqs_mldsa_backend.py -q --junitxml=shield-v4-real-oqs-results.xml
-python scripts/assert_real_oqs_junit_not_skipped.py shield-v4-real-oqs-results.xml
-```
+V4.8G originally introduced a gated ML-DSA proof. The current dedicated
+workflow runs both native nodes with both environment gates enabled, using
+the exact two-node command and guard above. An ML-DSA-only run does not
+satisfy the current release gate.
 
 That gated proof checks that `ML-DSA-65` is enabled, generates a real keypair through liboqs, signs through the DGB Sentinel AI backend, verifies through the same backend, rejects a tampered signature, rejects a cross-key verification attempt, and rejects wrong-length public-key material through the SentinelAiV4RealCryptoBackendError hierarchy.
 
 A public claim that live liboqs ML-DSA verified for DGB Sentinel AI requires that dedicated workflow to finish green with the JUnit guard proving `skipped == 0`, `failures == 0`, and `errors == 0`. Full release-grade real-backend proof remains a V4.10 release gate.
+
+E4 requires tests=2 and both exact testcase identities on the candidate commit.
+The workflow still uses floating upstream liboqs/liboqs-python sources;
+source pinning and reproducibility remain later roadmap gates. This evidence
+does not prove a production classical Ed25519 backend, HSM assurance, wallet
+key custody, transaction signing, or final FIPS 206 conformance.
 
 ## Third-party attribution
 
